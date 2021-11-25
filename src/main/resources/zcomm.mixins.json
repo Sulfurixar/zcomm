@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "zener.zcomm.mixin",
+    "compatibilityLevel": "JAVA_16",
+    "mixins": [
+    ],
+    "client": [
+      "zcommsMixin",
+      "charmMixin",
+      "ZItemRendererMixin"
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }

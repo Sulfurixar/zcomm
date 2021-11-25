@@ -1,0 +1,38 @@
+{
+    "schemaVersion": 1,
+    "id": "zcomm",
+    "version": "${version}",
+  
+    "name": "Nightingale Communications Device Mod",
+    "description": "Communications device mod for Nightingale server.",
+    "authors": [
+      "Me!"
+    ],
+    "contact": {
+    },
+  
+    "license": "CC0-1.0",
+    "icon": "assets/zcomm/icon.png",
+  
+    "environment": "*",
+    "entrypoints": {
+      "main": [
+        "zener.zcomm.Main"
+      ],
+      "client": [
+        "zener.zcomm.MainClient"
+      ]
+    },
+    "mixins": [
+      "zcomm.mixins.json"
+    ],
+  
+    "depends": {
+      "fabricloader": ">=0.11.3",
+      "fabric": "*",
+      "minecraft": "1.17.1",
+      "java": ">=16"
+    },
+    "suggests": {
+    }
+  }

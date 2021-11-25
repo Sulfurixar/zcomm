@@ -1,0 +1,10 @@
+{
+    "item.zcomm.comm": "Z-Comm",
+    "item.zcomm.charm": "Z-Type Communications Device Charm Applicance",
+    "item.zcomm.casing": "Z-Type Communications Device Cover",
+    "item.zcomm.upgrade": "Z-Type Communications Device Module",
+    "itemGroup.zcomm.general": "Z-Comms Mod",
+    "gui.zcomm.charmslot": "Charm Slot",
+    "gui.zcomm.casingslot": "Cover Slot",
+    "gui.zcomm.upgradeslot": "Upgrade Slots"
+}

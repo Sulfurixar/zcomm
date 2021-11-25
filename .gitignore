@@ -1,0 +1,47 @@
+# gradle
+
+.gradle/
+build/
+out/
+classes/
+
+# eclipse
+
+*.launch
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# macos
+
+*.DS_Store
+
+# fabric
+
+run/
+whitelist.json
+usercache.json
+ops.json
+eula.txt
+banned-players.json
+banned-ips.json
+world/**
+saves/**
+mods/**
+modelworks/**
+logs/**
+crash-reports/**
+config/**
+.fabric/**
