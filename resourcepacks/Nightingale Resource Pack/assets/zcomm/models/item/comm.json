@@ -1,0 +1,9 @@
+{
+    "parent": "zcomm:item/comm_parent",
+    "overrides": [
+        {
+            "predicate": {"custom_model_data":1}, 
+            "model": "zcomm:custom/zener/mycommv1"
+        }
+    ]
+}

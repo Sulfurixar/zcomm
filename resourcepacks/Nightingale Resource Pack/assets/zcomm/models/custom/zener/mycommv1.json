@@ -1,0 +1,8 @@
+{
+    "parent": "zcomm:item/comm_parent",
+    "texture_size": [32, 32],
+	"textures": {
+		"0": "zcomm:custom/zener/a",
+		"1": "zcomm:custom/zener/b"
+	}
+}
