@@ -1,0 +1,42 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "    EECT    ",
+            "color": "gold",
+            "bold": true,
+            "obfuscated": false
+        },
+        "description": [
+            {
+                "translate":"You have passed the Echelon Electronics Z-Type Communication Device Appliances Exam! You are now an",
+                "bold":true,"color":"aqua"
+            },
+            {
+                "text":" [","bold":true,"italic":true,"color":"dark_red"
+            },
+            {
+                "text":"Echelon Electronics Certified Technician","bold":true,"italic":true,"color":"gold"
+            },
+            {
+                "text":"]","bold":true,"italic":true,"color":"dark_red"
+            },
+            {
+                "text":"!","bold":true,"color":"aqua"
+            }
+        ],
+        "icon": {
+            "item": "zcomm:comm"
+        },
+        "frame": "goal",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false,
+        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+    },
+    "criteria": {
+        "zcomm": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

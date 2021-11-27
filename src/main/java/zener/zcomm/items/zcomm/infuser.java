@@ -10,9 +10,9 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import zener.zcomm.Main;
 
-public class upgrade extends Item {
+public class infuser extends Item {
     
-    public upgrade (Settings settings) {
+    public infuser (Settings settings) {
         super(settings);
     }
 

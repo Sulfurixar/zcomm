@@ -1,6 +1,7 @@
 package zener.zcomm.data;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
+import zener.zcomm.util.nrCheck;
 
 public class dataHandler {
 
@@ -35,13 +37,51 @@ public class dataHandler {
         data.save();
         reloadData();
     }
+
+    public static void addEntry(String uuid, tData tData) {
+        data.techData.put(uuid, tData);
+        data.save();
+        reloadData();
+    }
+
+    public static void updateEntry(String uuid, tData tData) {
+        data.techData.replace(uuid, tData);
+        data.save();
+        reloadData();
+    }
+
+    public static void removeTEntry(String uuid) {
+        data.techData.remove(uuid);
+        data.save();
+        reloadData();
+    }
+
+    public static boolean checkDUserEntry(String uuid) {
+        return data.commData.entrySet().stream().filter(x -> x.getValue().USER_ID.compareTo(uuid) == 0).map(x -> x.getValue()).collect(Collectors.toList()).size() > 0;
+    }
+
+    public static boolean checkTEntry(String uuid) {
+        return data.techData.containsKey(uuid);
+    }
+
+    public static Map<String, playerData> get_user_data(String uuid) {
+        return data.commData.entrySet().stream().filter(x -> x.getValue().USER_ID.compareTo(uuid) == 0).collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+    }
+
+    public static boolean check_comm(String nr) {
+        return data.commData.entrySet().stream().filter(x -> x.getValue().COMM_NR.compareTo(nr) == 0).map(x -> x.getValue()).collect(Collectors.toList()).size() > 0;
+    }
+
+    public static Map<String, playerData> get_comm(String nr) {
+        return data.commData.entrySet().stream().filter(x -> x.getValue().COMM_NR.compareTo(nr) == 0).collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+    }
     
     public static boolean checkNR(int nr, data data) {
 
         if (data == null) return false;
 
         playerData[] vals = data.commData.values().toArray(new playerData[data.commData.size()]);
-        String _nr = String.format("%03d", nr);
+        String _nr = new nrCheck(nr).getNrStr();
         for (int i = 0; i < data.commData.size(); i++) {
             if (vals[i].COMM_NR.compareTo(_nr) == 0) {
                 return false;
@@ -60,8 +100,6 @@ public class dataHandler {
 
     public static PacketByteBuf writeNrTransmitter(PacketByteBuf buf) {
 
-        System.out.println("writeNrTransmitter");
-
         Map<String, playerData> commData = dataHandler.data.commData;
         // How many entries there are in commData
         buf.writeInt(commData.size());
@@ -75,7 +113,6 @@ public class dataHandler {
     }
 
     public static data readNrTransmitter(PacketByteBuf buf) {
-        System.out.println("readNrTransmitter");
         data _data = data;
         if (_data == null) {
             _data = new data();

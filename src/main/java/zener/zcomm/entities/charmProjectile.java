@@ -79,8 +79,13 @@ public class charmProjectile extends ThrownItemEntity{
         super.tick();
         
         if (this.getOwner() == null) {
-
             this.kill();
+            return;
+        }
+
+        if (!this.getOwner().isPlayer()) {
+            this.kill();
+            return;
         }
         
      }

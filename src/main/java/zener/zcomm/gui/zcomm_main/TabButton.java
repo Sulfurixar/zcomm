@@ -20,6 +20,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import zener.zcomm.Main;
 import zener.zcomm.chat.ChatHistory;
+import zener.zcomm.util.nrCheck;
 
 public class TabButton extends WButton {
 
@@ -54,7 +55,7 @@ public class TabButton extends WButton {
                     if (box[2] == Main.GLOBAL_CHANNEL_NR)
                         nrfield.setSuggestion(new LiteralText(" G"));
                     else {
-                        nrfield.setSuggestion(new LiteralText(String.format("%03d", box[2])));
+                        nrfield.setSuggestion(new LiteralText(new nrCheck(box[2]).getNrStr()));
                     }
                     MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     break;
@@ -116,7 +117,7 @@ public class TabButton extends WButton {
         for (int i = 0; i < channels.length; i++) {
             if (channels[i] < 0)
                 continue;
-            draw_tab(matrices, x+box_width*(i+1), y, mouseX, mouseY, new LiteralText(String.format("%03d", channels[i])), ChatHistory.getInstance().getLast_channel(comm_nr) == channels[i]);
+            draw_tab(matrices, x+box_width*(i+1), y, mouseX, mouseY, new LiteralText(new nrCheck(channels[i]).getNrStr()), ChatHistory.getInstance().getLast_channel(comm_nr) == channels[i]);
             boxes.add(new int[] {0+box_width*(i+1)-1, 0, channels[i]});
         }
 

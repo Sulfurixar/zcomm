@@ -25,6 +25,7 @@ import zener.zcomm.data.dataHandler;
 import zener.zcomm.data.playerData;
 import zener.zcomm.items.zcomm.comm;
 import zener.zcomm.util.inventoryUtils;
+import zener.zcomm.util.nrCheck;
 
 public class InvGUIDescription extends SyncedGuiDescription {
     
@@ -58,22 +59,30 @@ public class InvGUIDescription extends SyncedGuiDescription {
     private void setupContainer(PlayerInventory playerInventory, ItemStack zcommItemStack, WGridPanel root) {
 
         NbtList tag = zcommItemStack.getOrCreateNbt().getList("Inventory", NbtType.COMPOUND);
+
         SimpleInventory inventory = new SimpleInventory(INVENTORY_SIZE) {
             @Override
             public void markDirty() {
+                if (playerInventory.player.world.isClient()) {
+                    return;
+                }
                 zcommItemStack.getOrCreateNbt().put("Inventory", inventoryUtils.toTag(this));
                 NbtCompound coverTag = this.getStack(1).getOrCreateNbt();
-                if (coverTag.contains("CustomModelData")) {
-                    zcommItemStack.getOrCreateNbt().putInt("CustomModelData", coverTag.getInt("CustomModelData"));
-                } else if (zcommItemStack.getOrCreateNbt().contains("CustomModelData")){
-                    zcommItemStack.getOrCreateNbt().remove("CustomModelData");
+                if (!coverTag.contains("v") || coverTag.getBoolean("v") == false) {
+                    if (zcommItemStack.getOrCreateNbt().contains("CustomModelData")){
+                        zcommItemStack.getOrCreateNbt().remove("CustomModelData");
+                    }
+                } else { 
+                    if (coverTag.contains("CustomModelData")) {
+                        zcommItemStack.getOrCreateNbt().putInt("CustomModelData", coverTag.getInt("CustomModelData"));
+                    }
                 }
                 try {
                     String uuid = zcommItemStack.getNbt().getString("UUID");
                     playerData playerData = dataHandler.data.commData.get(uuid);
                     if (playerData == null) {
                         int nr = zcommItemStack.getOrCreateNbt().getInt("NR");
-                        dataHandler.addEntry(uuid, new playerData(playerInventory.player.getUuidAsString(), String.format("%03d", nr), "", "", new String[] { "", "", "", "", "", ""}));
+                        dataHandler.addEntry(uuid, new playerData(playerInventory.player.getUuidAsString(), new nrCheck(nr).getNrStr(), "", "", new String[] { "", "", "", "", "", ""}));
                     } else {
                         playerData newPlayerData = new playerData(zcommItemStack, playerData.USER_ID);
                         dataHandler.updateEntry(uuid, newPlayerData);
@@ -87,7 +96,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
 
         inventoryUtils.fromTag(tag, inventory);
 
-        WText charmText = new WText(new TranslatableText("gui.zcomm.charmslot"));
+        WText charmText = new WText(new TranslatableText("gui."+Main.identifier+".charmslot"));
         charmText.setVerticalAlignment(VerticalAlignment.BOTTOM);
         charmText.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(charmText, 0, 1, 3, 1);
@@ -98,7 +107,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
         
         root.add(charmSlot, 1, 2);
 
-        WText casingText = new WText(new TranslatableText("gui.zcomm.casingslot"));
+        WText casingText = new WText(new TranslatableText("gui."+Main.identifier+".casingslot"));
         casingText.setVerticalAlignment(VerticalAlignment.BOTTOM);
         casingText.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(casingText, 0, 3, 3, 1);
@@ -109,7 +118,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
 
         root.add(casingSlot, 1, 4);
 
-        WText upgradeText = new WText(new TranslatableText("gui.zcomm.upgradeslot"));
+        WText upgradeText = new WText(new TranslatableText("gui."+Main.identifier+".upgradeslot"));
         upgradeText.setVerticalAlignment(VerticalAlignment.BOTTOM);
         upgradeText.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(upgradeText, 5, 1, 4, 1);

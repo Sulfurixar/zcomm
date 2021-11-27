@@ -1,9 +1,13 @@
 package zener.zcomm.data;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import zener.zcomm.util.nrCheck;
 
 public class playerData {
     
@@ -25,7 +29,7 @@ public class playerData {
     public playerData(ItemStack zcommItemStack, String user_id) {
         NbtCompound tag = zcommItemStack.getOrCreateNbt();
         this.USER_ID = user_id;
-        this.COMM_NR = String.format("%03d", tag.getInt("NR"));
+        this.COMM_NR = new nrCheck(tag.getInt("NR")).getNrStr();
         NbtList invtag = zcommItemStack.getOrCreateNbt().getList("Inventory", NbtType.COMPOUND);
 
         //CHARM
@@ -35,6 +39,24 @@ public class playerData {
         NbtCompound casingTag = (NbtCompound) invtag.getCompound(1);
         this.CASING = casingTag.asString();
         this.UPGRADES = new String[] { "", "", "", "", "", ""};
-    } 
+    }
+
+    public JsonObject getCharm() {
+        JsonObject charm = dataHandler.GSON.fromJson(this.CHARM, JsonObject.class);
+        return charm;
+    }
+
+    public JsonObject getCasing() {
+        JsonObject casing = dataHandler.GSON.fromJson(this.CASING, JsonObject.class);
+        return casing;
+    }
+
+    public JsonArray getUpgrades() {
+        JsonArray upgrades = new JsonArray();
+        for (String upgrade : this.UPGRADES) {
+            upgrades.add(dataHandler.GSON.fromJson(upgrade, JsonObject.class));
+        }
+        return upgrades;
+    }
     
 }

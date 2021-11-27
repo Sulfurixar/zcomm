@@ -19,7 +19,6 @@ public class zcommsMixin {
     @Inject(method = "addMessage(Lnet/minecraft/text/Text;I)V", at = @At("HEAD"), cancellable = true)
     private void addMessage(Text text, int id, CallbackInfo ci) {
         if (ChatHistory.getInstance().handleText(text)) {
-            System.out.println("Received: " + text.toString());
             ci.cancel();
             ChatHistory.getInstance().resendMessage(text);
         }

@@ -25,14 +25,14 @@ public class MessageHandler implements Runnable {
 
     public void run() {
 
-        ScreenNetworking.of(zcommMainGUIDescription, NetworkSide.CLIENT).send(new Identifier("zcomm", "zcomm_message"), buf -> {
+        ScreenNetworking.of(zcommMainGUIDescription, NetworkSide.CLIENT).send(new Identifier(Main.identifier, Main.identifier+"_message"), buf -> {
             String message = "";
             nrCheck nrCheck = new nrCheck(((String) nrField.getSuggestion().asString()).trim());
             if (nrField.getSuggestion() == null || !nrCheck.isValid()) {
                 return;            
             }
 
-            message += String.format("%s=%d,TO=%d;%s", Main.ZCOMM_COMMUNICATION_IDENTIFIER, this.nr, nrCheck.getNr(), textField.getText());
+            message += String.format("%s=%s,TO=%s;%s", Main.ZCOMM_COMMUNICATION_IDENTIFIER, new nrCheck(this.nr).getNrStr(), nrCheck.getNrStr(), textField.getText());
             textField.setText("");
             buf.writeString(message);
             buf.writeUuid(playerEntity.getUuid());

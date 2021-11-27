@@ -21,6 +21,8 @@ repositories {
         name = "CottonMC"
         url = "https://server.bbkr.space/artifactory/libs-release"
     }
+
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
@@ -41,6 +43,9 @@ dependencies {
 
 	// LibGui
 	modImplementation include("io.github.cottonmc:LibGui:${project.libgui_version}")
+
+	// luckperms
+	modImplementation 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
 }
 
 processResources {

@@ -22,6 +22,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import zener.zcomm.Main;
 import zener.zcomm.data.charmData;
 import zener.zcomm.entities.charmProjectile;
 import zener.zcomm.gui.zcomm_inventory.InvGUIDescription;
@@ -41,6 +42,12 @@ public class comm extends Item {
         ItemStack zcommItemStack = user.getStackInHand(hand);
         NbtCompound tag = zcommItemStack.getOrCreateNbt();
 
+        //check item verification
+        if (!tag.contains("v") || tag.getBoolean("v") == false) {
+            user.sendMessage(new TranslatableText(Main.identifier+".item_not_verified"), true);
+            return super.use(world, user, hand);
+        }
+
         // open interface
         
         if (user.isSneaking()) {
@@ -59,6 +66,15 @@ public class comm extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+
+        //check item verification
+        if (entity.isPlayer()) {
+            NbtCompound _tag = stack.getOrCreateNbt();
+            if (!_tag.contains("v") || _tag.getBoolean("v") == false) {
+                ((PlayerEntity)entity).sendMessage(new TranslatableText(Main.identifier+".item_not_verified"), true);
+                return;
+            }
+        }
         if (
             !world.isClient && 
             stack.getOrCreateNbt().contains("UUID") && 
@@ -71,6 +87,15 @@ public class comm extends Item {
                 NbtCompound stackTag = (NbtCompound) tag.getCompound(0);
                 if (stackTag != null) {
                     charmStack = ItemStack.fromNbt(stackTag.getCompound("Stack"));
+                    if (charmStack.getItem() == Main.CHARM) {
+                        // check item verification
+                        NbtCompound _tag = charmStack.getOrCreateNbt();
+                        if (!_tag.contains("v") || _tag.getBoolean("v") == false) {
+                            if (entity.isPlayer()) {
+                                ((PlayerEntity)entity).sendMessage(new TranslatableText(Main.identifier+".item_not_verified"), true);
+                            }
+                        }
+                    }
                 }
             }
 

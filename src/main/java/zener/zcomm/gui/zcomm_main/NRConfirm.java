@@ -60,7 +60,7 @@ public class NRConfirm implements Runnable{
 
         ChatHistory.getInstance().add_last_channel(comm_nr, nrcheck.getNr());
         ChatHistory.getInstance().setLast_channel(comm_nr, nrcheck.getNr());
-        NR_Field.setSuggestion(String.format("%03d", nrcheck.getNr()));
+        NR_Field.setSuggestion(nrcheck.getNrStr());
         NR_Field.setText("");
     
     }

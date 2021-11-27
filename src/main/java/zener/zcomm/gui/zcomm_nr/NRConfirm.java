@@ -6,6 +6,7 @@ import io.github.cottonmc.cotton.gui.widget.WTextField;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import zener.zcomm.Main;
 import zener.zcomm.util.nrCheck;
 
 public class NRConfirm implements Runnable {
@@ -51,7 +52,7 @@ public class NRConfirm implements Runnable {
             return;
         }
 
-        ScreenNetworking.of(zcommNRGUIDescription, NetworkSide.CLIENT).send(new Identifier("zcomm", "set_nr"), buf -> buf.writeInt(nrcheck.getNr()));
+        ScreenNetworking.of(zcommNRGUIDescription, NetworkSide.CLIENT).send(new Identifier(Main.identifier, "set_nr"), buf -> buf.writeInt(nrcheck.getNr()));
     }
     
 }

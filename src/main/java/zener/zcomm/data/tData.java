@@ -1,4 +1,4 @@
-package zener.zcomm.data;
+  package zener.zcomm.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ public class tData {
     public final boolean isTechnician;
     public final boolean isHeadTechnician;
     private final String p = Main.ZCOMM_COMMUNICATION_IDENTIFIER.toString();
+    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
 
     public tData(PlayerEntity player) {
         this.UUID = player.getUuid();
@@ -95,6 +96,22 @@ public class tData {
         System.arraycopy(digest,0,combined,uuid.length, digest.length);
         md.update(combined);
         return md.digest();
+
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        byte[] hexChars = new byte[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars, StandardCharsets.UTF_8);
+    }
+
+    public String get_hash() {
+
+        return bytesToHex(this.HASH);
 
     }
     

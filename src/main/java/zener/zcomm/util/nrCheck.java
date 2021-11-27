@@ -63,6 +63,10 @@ public class nrCheck {
         return this._nr;
     }
 
+    public String getNrStr() {
+        return this.nr;
+    }
+
     public boolean isValid() {
         return (isNr() && !isLengthLong() && !isLengthShort() && !isNegative()) || nr.equals("G");
     }

@@ -34,7 +34,6 @@ public class charmData {
             this.overlay = overlay;
             this.model = model;
         }
-
     }
 
     public static charmData getInstance() {

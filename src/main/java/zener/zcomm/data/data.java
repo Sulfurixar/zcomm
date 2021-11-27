@@ -15,12 +15,16 @@ import java.util.function.Consumer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.WorldSavePath;
+import zener.zcomm.Main;
 
 public class data {
     
     public File Data;
+    public File TData;
 
 
     /*  Structure of commData
@@ -57,13 +61,18 @@ public class data {
     public data(MinecraftServer server) {
         Path dataPath = server.getSavePath(WorldSavePath.ROOT);
         
-        File dataDir = dataPath.resolve("zcomms").toFile();
+        File dataDir = dataPath.resolve(Main.identifier).toFile();
         try {
             if (!dataDir.exists())
                 dataDir.mkdirs();
-            this.Data = new File(dataDir, "zcomms_data.json");
+            this.Data = new File(dataDir, Main.identifier+"_data.json");
+            this.TData = new File(dataDir, "tdata.dat");
             if (!this.Data.exists()) {
                 this.Data.createNewFile();
+                this.save();
+            }
+            if (!this.TData.exists()) {
+                this.TData.createNewFile();
                 this.save();
             }
         } catch (IOException e) {
@@ -76,63 +85,47 @@ public class data {
             FileReader reader = new FileReader(this.Data);
             JsonObject obj = dataHandler.GSON.fromJson(reader, JsonObject.class);
             reader.close();
+            reader = new FileReader(this.TData);
+            JsonObject obj2 = dataHandler.GSON.fromJson(reader, JsonObject.class);
+            reader.close();
             
-            if (obj == null) {
-                return;
+            if (obj != null) {
+                JsonObject commdata = obj.get("comm_data").getAsJsonObject();
+                commdata.entrySet().iterator().forEachRemaining(entry -> {
+                    JsonObject playerdata = entry.getValue().getAsJsonObject();
+                    List<String> upgrade = new ArrayList<String>();
+                    playerdata.getAsJsonArray("upgrades").forEach(upgrades -> {
+                        upgrade.add(upgrades.getAsString());
+                    });
+                    
+                    playerData playerData = new playerData(
+                        playerdata.get("id").getAsString(), 
+                        playerdata.get("nr").getAsString(), 
+                        playerdata.get("charm").getAsString(), 
+                        playerdata.get("casing").getAsString(),
+                        upgrade.toArray(new String[6])
+                    );
+                    commData.put(entry.getKey(), playerData);
+                });
             }
-            JsonObject commdata = obj.get("comm_data").getAsJsonObject();
-            //JsonObject tdata = obj.get("tdata").getAsJsonObject();
+            
+            if (obj2 != null) {
+            JsonObject tdata = obj2.get("tdata").getAsJsonObject();
 
-            commdata.entrySet().iterator().forEachRemaining(entry -> {
-                JsonObject playerdata = entry.getValue().getAsJsonObject();
-                List<String> upgrade = new ArrayList<String>();
-                playerdata.getAsJsonArray("upgrades").forEach(upgrades -> {
-                    upgrade.add(upgrades.getAsString());
+                tdata.entrySet().iterator().forEachRemaining(entry -> {
+                    JsonObject _tdata = entry.getValue().getAsJsonObject();
+                    List<Byte> a = new ArrayList<>();
+                    List<Byte> b = new ArrayList<>();
+                    _tdata.getAsJsonArray("a").forEach(ba -> {
+                        a.add(ba.getAsByte());
+                    });
+                    _tdata.getAsJsonArray("b").forEach(bb -> {
+                        b.add(bb.getAsByte());
+                    });
+                    tData newTData = new tData(ArrayUtils.toPrimitive(a.toArray(new Byte[a.size()])), ArrayUtils.toPrimitive(b.toArray(new Byte[b.size()])));
+                    techData.put(entry.getKey(), newTData);
                 });
-                
-                playerData playerData = new playerData(
-                    playerdata.get("id").getAsString(), 
-                    playerdata.get("nr").getAsString(), 
-                    playerdata.get("charm").getAsString(), 
-                    playerdata.get("casing").getAsString(),
-                    upgrade.toArray(new String[6])
-                );
-                commData.put(entry.getKey(), playerData);
-            });
-
-            /*
-            commdata.keySet().forEach(uuid -> {
-                JsonObject playerdata = commdata.get(uuid).getAsJsonObject();
-                List<String> upgrade = new ArrayList<String>();
-                playerdata.getAsJsonArray("upgrades").forEach(upgrades -> {
-                    upgrade.add(upgrades.getAsString());
-                });
-                
-                playerData playerData = new playerData(
-                    playerdata.get("id").getAsString(), 
-                    playerdata.get("nr").getAsString(), 
-                    playerdata.get("charm").getAsString(), 
-                    playerdata.get("casing").getAsString(),
-                    upgrade.toArray(new String[6])
-                );
-                commData.put(uuid, playerData);
-            });*/
-
-            /*
-            tdata.keySet().forEach(t -> {
-                JsonObject _tdata = tdata.get(t).getAsJsonObject();
-                List<Byte> a = new ArrayList<>();
-                List<Byte> b = new ArrayList<>();
-                _tdata.getAsJsonArray("a").forEach(ba -> {
-                    a.add(ba.getAsByte());
-                });
-                _tdata.getAsJsonArray("b").forEach(bb -> {
-                    b.add(bb.getAsByte());
-                });
-                tData newTData = new tData(ArrayUtils.toPrimitive(a.toArray(new Byte[a.size()])), ArrayUtils.toPrimitive(b.toArray(new Byte[b.size()])));
-                techData.put(tData.UUID.toString(), newTData);
-            });
-            */
+            }
             
 
         } catch (IOException e) {
@@ -144,8 +137,10 @@ public class data {
     public void save() {
         JsonObject obj = new JsonObject();
         obj.addProperty("__comment", "TODO");
+        JsonObject obj2 = new JsonObject();
+        obj2.addProperty("__comment", "TODO");
         JsonObject commData = new JsonObject();
-        //JsonObject tdata = new JsonObject();
+        JsonObject tdata = new JsonObject();
 
         this.commData.forEach((uuid, _playerdata) -> {
             JsonObject playerdata = new JsonObject();
@@ -162,7 +157,7 @@ public class data {
         });
         obj.add("comm_data", commData);
 
-        /*
+        
         this.techData.forEach((uuid, _tdata) -> {
             JsonObject __tdata = new JsonObject();
             JsonArray a = new JsonArray();
@@ -178,12 +173,16 @@ public class data {
             __tdata.add("b", b);
             tdata.add(uuid, __tdata);
         });
-        obj.add("tdata", tdata);
-        */
+        obj2.add("tdata", tdata);
+        
 
         try {
             FileWriter writer = new FileWriter(this.Data);
             dataHandler.GSON.toJson(obj, writer);
+            writer.close();
+
+            writer = new FileWriter(this.TData);
+            dataHandler.GSON.toJson(obj2, writer);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -3,6 +3,8 @@
     "item.zcomm.charm": "Z-Type Communications Device Charm Appliance",
     "item.zcomm.casing": "Z-Type Communications Device Cover",
     "item.zcomm.upgrade": "Z-Type Communications Device Module",
+    "item.zcomm.crafting_component": "Z-Type Scrap",
+    "item.zcomm.infuser": "Infuser",
     "itemGroup.zcomm.general": "Z-Comms Mod",
     "gui.zcomm.charmslot": "Charm Slot",
     "gui.zcomm.casingslot": "Cover Slot",

@@ -27,11 +27,15 @@ import zener.zcomm.gui.zcomm_nr.zcommNRGUIDescription;
 import zener.zcomm.items.zcomm.casing;
 import zener.zcomm.items.zcomm.charm;
 import zener.zcomm.items.zcomm.comm;
+import zener.zcomm.items.zcomm.craftingComponent;
+import zener.zcomm.items.zcomm.infuser;
 import zener.zcomm.items.zcomm.upgrade;
 
 
 
 public class Main implements ModInitializer {
+
+	public static final String identifier = "zcomm";
 
     @Override
 	public void onInitialize() {
@@ -39,10 +43,13 @@ public class Main implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
+
 		Registry.register(Registry.ITEM, ZCOMM_IDENTIFIER, ZCOMM);
 		Registry.register(Registry.ITEM, CHARM_IDENTIFIER, CHARM);
 		Registry.register(Registry.ITEM, CASING_IDENTIFIER, CASING);
 		Registry.register(Registry.ITEM, UPGRADE_IDENTIFIER, UPGRADE);
+		Registry.register(Registry.ITEM, CRAFTING_COMPONENT_IDENTIFIER, CRAFTING_COMPONENT);
+		Registry.register(Registry.ITEM, INFUSER_IDENTIFIER, INFUSER);
 
 		CommandRegistrationCallback.EVENT.register(Command::register);
 
@@ -51,22 +58,24 @@ public class Main implements ModInitializer {
 	}
 
 	//// INTERFACE
-	public static final Identifier ZCOMM_INVIDENTIFIER = new Identifier("zcomm", "comm_inventory");
-	public static final Identifier ZCOMM_NRIDENTIFIER = new Identifier("zcomm", "comm_nr");
-	public static final Identifier ZCOMM_MAINIDENTIFIER = new Identifier("zcomm", "comm_main");
+	public static final Identifier ZCOMM_INVIDENTIFIER = new Identifier(identifier, "comm_inventory");
+	public static final Identifier ZCOMM_NRIDENTIFIER = new Identifier(identifier, "comm_nr");
+	public static final Identifier ZCOMM_MAINIDENTIFIER = new Identifier(identifier, "comm_main");
 	public static final ScreenHandlerType<InvGUIDescription> ZCOMM_INV_SCREEN_TYPE = ScreenHandlerRegistry.registerExtended(ZCOMM_INVIDENTIFIER, InvGUIDescription::new);
 	public static final ScreenHandlerType<zcommNRGUIDescription> ZCOMM_NR_SCREEN_TYPE = ScreenHandlerRegistry.registerExtended(ZCOMM_NRIDENTIFIER, zcommNRGUIDescription::new);
 	public static final ScreenHandlerType<MainGUIDescription> ZCOMM_MAIN_SCREEN_TYPE = ScreenHandlerRegistry.registerExtended(ZCOMM_MAINIDENTIFIER, MainGUIDescription::new);
 
 
 	//// ITEMS
-	public static final Identifier ZCOMM_IDENTIFIER = new Identifier("zcomm", "comm");
-	public static final Identifier CHARM_IDENTIFIER = new Identifier("zcomm", "charm");
-	public static final Identifier CASING_IDENTIFIER = new Identifier("zcomm", "casing");
-	public static final Identifier UPGRADE_IDENTIFIER = new Identifier("zcomm", "upgrade");
+	public static final Identifier ZCOMM_IDENTIFIER = new Identifier(identifier, "comm");
+	public static final Identifier CHARM_IDENTIFIER = new Identifier(identifier, "charm");
+	public static final Identifier CASING_IDENTIFIER = new Identifier(identifier, "casing");
+	public static final Identifier UPGRADE_IDENTIFIER = new Identifier(identifier, "upgrade");
+	public static final Identifier CRAFTING_COMPONENT_IDENTIFIER = new Identifier(identifier, "crafting_component");
+	public static final Identifier INFUSER_IDENTIFIER = new Identifier(identifier, "infuser");
 	public static final String ZCOMM_TRANSLATION_KEY = Util.createTranslationKey("container", ZCOMM_IDENTIFIER);
 	public static final ItemGroup ZCOMM_GROUP = FabricItemGroupBuilder.create(
-		new Identifier("zcomm", "general"))
+		new Identifier(identifier, "general"))
 	.icon(() -> new ItemStack(Items.BOWL))
 	.build();
 
@@ -74,6 +83,12 @@ public class Main implements ModInitializer {
 	public static Item CHARM = new charm(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item CASING = new casing(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item UPGRADE = new upgrade(new Item.Settings().group(ZCOMM_GROUP));
+	public static Item CRAFTING_COMPONENT = new craftingComponent(new Item.Settings().group(ZCOMM_GROUP));
+	public static Item INFUSER = new infuser(new Item.Settings().group(ZCOMM_GROUP));
+
+	public static Item[] ITEMS = new Item[] {
+		ZCOMM, CHARM, CASING, UPGRADE, CRAFTING_COMPONENT, INFUSER
+	};
 
 	//// GLOBAL VAR FOR MANAGING CHANNELS
 	public static int GLOBAL_CHANNEL_NR = 71;
@@ -82,21 +97,24 @@ public class Main implements ModInitializer {
 	//// CHARM STUFF
 	public static final EntityType<charmProjectile> charmProjectileEntityType = Registry.register(
 		Registry.ENTITY_TYPE, 
-		new Identifier("zcomm", "charm_projectile"), 
+		new Identifier(identifier, "charm_projectile"), 
 		FabricEntityTypeBuilder.<charmProjectile>create(SpawnGroup.MISC, charmProjectile::new)
 			.dimensions(EntityDimensions.fixed(0.25F, 0.25F)
 		)
 		.trackRangeBlocks(4).trackedUpdateRate(10).build()
 	);
-	public static final Identifier CHARM_SPAWN_PACKET = new Identifier("zcomm", "charm_spawn_packet");
+	public static final Identifier CHARM_SPAWN_PACKET = new Identifier(identifier, "charm_spawn_packet");
 
+	//// ADVANCEMENTS
+	public static final Identifier ZCOMM_ROOT_ADVANCEMENT = new Identifier(identifier, "root");
+	public static final Identifier ZCOMM_CERT_ADVANCEMENT = new Identifier(identifier, "zcomm_cert");
+	public static final Identifier ZCOMM_HEAD_ADVANCEMENT = new Identifier(identifier, "zcomm_head");
+	
 	public static void serverLoad(MinecraftServer server) {
 		dataHandler.serverLoad(server);
 	}
 
-	public static final void receiveCommDataPacket() {
-
-	}
+	
 }
 
 

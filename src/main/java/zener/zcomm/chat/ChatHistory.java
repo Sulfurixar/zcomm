@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -95,7 +93,7 @@ public class ChatHistory {
             return false;
         
         //register message
-        LogManager.getLogger().info("[ZCOMM] {}", text.getString());
+        //LogManager.getLogger().info("[ZCOMM] {}", text.getString());
         int recipient = new nrCheck(getReceiver(text)).getNr();
         int sender = new nrCheck(getSender(text)).getNr();
         
@@ -206,7 +204,7 @@ public class ChatHistory {
             nrCheck nrcheck = new nrCheck(recipient);
             if (!nrcheck.isValid()) return;
             if (nrcheck.getNr() == Main.GLOBAL_CHANNEL_NR) {
-                client.inGameHud.getChatHud().addMessage(new LiteralText(String.format("§7[%03d]: %s", new nrCheck(getSender(text)).getNr(), getMessage(text))));
+                client.inGameHud.getChatHud().addMessage(new LiteralText(String.format("§7[%s]: %s", new nrCheck(getSender(text)).getNrStr(), getMessage(text))));
                 return;
             }
             // handle off-hand item
@@ -216,7 +214,7 @@ public class ChatHistory {
                     int nr = tag.getInt("NR");
                     nrcheck = new nrCheck(nr);
                     if (nrcheck.isValid()) {
-                        client.inGameHud.getChatHud().addMessage(new LiteralText(String.format("§7[%03d]: %s", new nrCheck(getSender(text)).getNr(), getMessage(text))));
+                        client.inGameHud.getChatHud().addMessage(new LiteralText(String.format("§7[%s]: %s", new nrCheck(getSender(text)).getNrStr(), getMessage(text))));
                         return;
                     }
                 }
@@ -229,7 +227,7 @@ public class ChatHistory {
                         int nr = tag.getInt("NR");
                         nrcheck = new nrCheck(nr);
                         if (nrcheck.isValid()) {
-                            client.inGameHud.getChatHud().addMessage(new LiteralText(String.format("§7[%03d]: %s", new nrCheck(getSender(text)).getNr(), getMessage(text))));
+                            client.inGameHud.getChatHud().addMessage(new LiteralText(String.format("§7[%s->%s]: %s", new nrCheck(getSender(text)).getNrStr(), nrcheck.getNrStr(), getMessage(text))));
                             return;
                         }
                     }

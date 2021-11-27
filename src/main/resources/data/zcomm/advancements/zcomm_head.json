@@ -1,0 +1,37 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "    EECHT    ",
+            "color": "gold",
+            "bold": true
+        },
+        "description": [
+            {
+                "text":" [","bold":true,"italic":true,"color":"dark_red"
+            },
+            {
+                "text":"Echelon Electronics Certified Head Technician","bold":true,"italic":true,"color":"gold"
+            },
+            {
+                "text":"]","bold":true,"italic":true,"color":"dark_red"
+            },
+            {
+                "text":"\nTech God. Damn.","bold":true,"color":"aqua"
+            }
+        ],
+        "icon": {
+            "item": "zcomm:comm"
+        },
+        "frame": "challenge",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "zcomm": {
+            "trigger": "minecraft:impossible"
+        }
+    },
+    "parent": "zcomm:root"
+}

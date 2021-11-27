@@ -68,12 +68,12 @@ public class ChatWidget extends WWidget {
             String sent_to = "";
             if (hist.getLast_channel(comm_nr) == Main.GLOBAL_CHANNEL_NR) {
                 if (recipient_nr.getNr() != Main.GLOBAL_CHANNEL_NR) {
-                    sent_to = String.format("->%03d", recipient_nr.getNr());
+                    sent_to = String.format("->%s", recipient_nr.getNrStr());
                 } else {
                     sent_to = "->G";
                 }
             }
-            String new_message = String.format("[%03d%s]: %s", sender_nr.getNr(), sent_to, message);
+            String new_message = String.format("[%s%s]: %s", sender_nr.getNrStr(), sent_to, message);
             int length = new_message.length();
             if (sender_nr.getNr() == comm_nr) {
                 new_message = "§6" + new_message;

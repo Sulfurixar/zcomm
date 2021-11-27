@@ -24,6 +24,7 @@ import zener.zcomm.Main;
 import zener.zcomm.chat.ChatHistory;
 import zener.zcomm.data.dataHandler;
 import zener.zcomm.items.zcomm.comm;
+import zener.zcomm.util.nrCheck;
 
 public class MainGUIDescription extends SyncedGuiDescription {
 
@@ -62,28 +63,25 @@ public class MainGUIDescription extends SyncedGuiDescription {
         String name = player.getName().asString();
         int nr = zcommItemStack.getOrCreateNbt().getInt("NR");
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).send(new Identifier("zcomm", "zcomm_check_owner"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.CLIENT).send(new Identifier(Main.identifier, Main.identifier+"_check_owner"), buf -> {
             buf.writeString(tag.getString("UUID"));
             buf.writeString(player.getUuidAsString());
             buf.writeString(name);
         });
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier("zcomm", "zcomm_check_owner"), buf -> {
-            if (dataHandler.checkOwner(buf.readString(), buf.readString())) {
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.identifier, Main.identifier+"_check_owner"), buf -> {
+            String uuid = buf.readString();
+            String owner_id = buf.readString();
+            if (dataHandler.checkOwner(uuid, owner_id)) {
                 String _name = buf.readString();
                 if (tag.getString("Owner").compareTo(_name) != 0) {
-    
-                    ScreenNetworking.of(this, NetworkSide.CLIENT).send(new Identifier("zcomm", "zcomm_change_owner_name"), buf2 -> buf2.writeString(_name));
+                    tag.put("Owner", NbtString.of(_name));
+                    playerInventory.markDirty();
                 }
             }
         });
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier("zcomm", "zcomm_change_owner_name"), buf -> {
-            tag.put("Owner", NbtString.of(buf.readString()));
-            playerInventory.markDirty();
-        });
-
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier("zcomm", "zcomm_message"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.identifier, Main.identifier+"_message"), buf -> {
             playerInventory.player.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(buf.readString()), MessageType.CHAT, buf.readUuid());
         });
 
@@ -106,7 +104,7 @@ public class MainGUIDescription extends SyncedGuiDescription {
             if (ChatHistory.getInstance().getLast_channel(nr) == Main.GLOBAL_CHANNEL_NR) {
                 nrfield.setSuggestion(" G");
             } else {
-                nrfield.setSuggestion(new LiteralText(String.format("%03d", ChatHistory.getInstance().getLast_channel(nr))));
+                nrfield.setSuggestion(new LiteralText(String.format("%s", new nrCheck(ChatHistory.getInstance().getLast_channel(nr)).getNrStr())));
             }
             nrfield.setEnterEvent(new NRConfirm(this, nr, nrfield));
             root.add(nrfield, 0, 11, 2, 1);
