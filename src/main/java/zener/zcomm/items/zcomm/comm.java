@@ -145,7 +145,7 @@ public class comm extends Item {
                     if (charmStack != null) {
                         charmProjectile charm = new charmProjectile(world, (LivingEntity) entity);
                         charm.setItem(charmStack);
-                        charm.setProperties(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+                        charm.setProperties(entity, 0.0F, 0.0F);
                         charmData.getInstance().setCharm(uuid, charm);
                         world.spawnEntity(charm);
                     }

@@ -2,6 +2,7 @@ package zener.zcomm.entities;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
@@ -36,6 +37,12 @@ public class charmProjectile extends ThrownItemEntity{
 
     public charmProjectile(World world, double x, double y, double z) {
         super(Main.charmProjectileEntityType, x, y, z, world);
+    }
+
+    public void setProperties(Entity entity, float pitch, float yaw) {
+        this.setOwner(entity);
+        this.setPitch(pitch);
+        this.setYaw(yaw);
     }
 
     @Environment(EnvType.CLIENT)

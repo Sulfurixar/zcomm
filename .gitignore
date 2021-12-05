@@ -4,6 +4,7 @@
 build/
 out/
 classes/
+remappedSrc/
 
 # eclipse
 
@@ -30,7 +31,9 @@ bin/
 
 # fabric
 
-run/
+saves/**
+resourcepacks/**
+run/*
 whitelist.json
 usercache.json
 ops.json
@@ -38,10 +41,11 @@ eula.txt
 banned-players.json
 banned-ips.json
 world/**
-saves/*
-!saves/New World
-saves/New World/*
-!saves/New World/datapacks
+run/saves/*
+!run/resourcepacks
+!run/saves/New World
+run/saves/New World/*
+!run/saves/New World/datapacks
 mods/**
 modelworks/**
 logs/**
