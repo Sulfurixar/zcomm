@@ -28,7 +28,6 @@ public class HandRecipe implements Recipe<Inventory> {
     @Getter private final DefaultedList<NbtCompound> data;
 
     public HandRecipe(Identifier id, String group, DefaultedList<Ingredient> ingredientList, ItemStack output, ItemStack catalyst, DefaultedList<NbtCompound> data) {
-        System.out.println(output.getOrCreateNbt().asString());
         this.id = id; this.group = group; this.ingredientList = ingredientList; this.output = output; this.catalyst = catalyst; this.data = data;
     }
 
@@ -66,7 +65,6 @@ public class HandRecipe implements Recipe<Inventory> {
     public ItemStack craft(Inventory inv) {
         ItemStack ret = new ItemStack(output.getItem(), output.getCount());
         ret.setNbt(output.getOrCreateNbt());
-        System.out.println(ret.getOrCreateNbt().asString());
         return ret;
     }
 

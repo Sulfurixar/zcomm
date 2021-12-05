@@ -91,7 +91,6 @@ public class handCraft {
         }
         if (success) {
             ItemStack output = recipeList.get(0).craft(inv);
-            System.out.println(output.getOrCreateNbt().asString());
             inv.insertStack(output);
         }
         inv.markDirty();
