@@ -33,24 +33,27 @@ bin/
 
 saves/**
 resourcepacks/**
+mods/**
+modelworks/**
+logs/**
+crash-reports/**
+screenshots/**
+config/**
+.fabric/**
+world/**
+
 run/*
+!run/resourcepacks
+!run/saves
+run/saves/*
+!run/saves/New World
+run/saves/New World/*
+!run/saves/New World/datapacks
+
+options.txt
 whitelist.json
 usercache.json
 ops.json
 eula.txt
 banned-players.json
 banned-ips.json
-world/**
-run/saves/*
-!run/resourcepacks
-!run/saves/New World
-run/saves/New World/*
-!run/saves/New World/datapacks
-mods/**
-modelworks/**
-logs/**
-crash-reports/**
-config/**
-.fabric/**
-options.txt
-screenshots/**
