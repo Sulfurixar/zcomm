@@ -1,0 +1,36 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+        {
+            "item": "zcomm:crafting_component",
+            "data": {
+                "CustomModelData": 4
+            }
+        },
+        {
+            "item": "zcomm:crafting_component",
+            "data": {
+                "CustomModelData": 3
+            }
+        },
+        {
+            "item": "zcomm:casing"
+        },
+        {
+            "item": "minecraft:iron_ingot"
+        },
+        {
+            "item": "zcomm:infuser"
+        }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:comm",
+        "count": 1
+    }
+}

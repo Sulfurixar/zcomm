@@ -58,7 +58,8 @@ public class InvGUIDescription extends SyncedGuiDescription {
 
     private void setupContainer(PlayerInventory playerInventory, ItemStack zcommItemStack, WGridPanel root) {
 
-        NbtList tag = zcommItemStack.getOrCreateNbt().getList("Inventory", NbtType.COMPOUND);
+        NbtCompound tag = zcommItemStack.getOrCreateNbt();
+        NbtList inventoryTag = tag.getList("Inventory", NbtType.COMPOUND);
 
         SimpleInventory inventory = new SimpleInventory(INVENTORY_SIZE) {
             @Override
@@ -66,19 +67,20 @@ public class InvGUIDescription extends SyncedGuiDescription {
                 if (playerInventory.player.world.isClient()) {
                     return;
                 }
-                zcommItemStack.getOrCreateNbt().put("Inventory", inventoryUtils.toTag(this));
+                tag.put("Inventory", inventoryUtils.toTag(this));
                 NbtCompound coverTag = this.getStack(1).getOrCreateNbt();
                 if (!coverTag.contains("v") || coverTag.getBoolean("v") == false) {
-                    if (zcommItemStack.getOrCreateNbt().contains("CustomModelData")){
-                        zcommItemStack.getOrCreateNbt().remove("CustomModelData");
+                    if (tag.contains("CustomModelData")){
+                        tag.remove("CustomModelData");
                     }
                 } else { 
                     if (coverTag.contains("CustomModelData")) {
-                        zcommItemStack.getOrCreateNbt().putInt("CustomModelData", coverTag.getInt("CustomModelData"));
+                        tag.putInt("CustomModelData", coverTag.getInt("CustomModelData"));
                     }
                 }
-                try {
-                    String uuid = zcommItemStack.getNbt().getString("UUID");
+
+                if (tag.contains("UUID")){
+                    String uuid = tag.getString("UUID");
                     playerData playerData = dataHandler.data.commData.get(uuid);
                     if (playerData == null) {
                         int nr = zcommItemStack.getOrCreateNbt().getInt("NR");
@@ -87,14 +89,13 @@ public class InvGUIDescription extends SyncedGuiDescription {
                         playerData newPlayerData = new playerData(zcommItemStack, playerData.USER_ID);
                         dataHandler.updateEntry(uuid, newPlayerData);
                     }
-                } catch(NullPointerException e) {
-                    System.out.println(e);
                 }
+                
                 super.markDirty();
             }
         };
 
-        inventoryUtils.fromTag(tag, inventory);
+        inventoryUtils.fromTag(inventoryTag, inventory);
 
         WText charmText = new WText(new TranslatableText("gui."+Main.identifier+".charmslot"));
         charmText.setVerticalAlignment(VerticalAlignment.BOTTOM);

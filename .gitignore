@@ -38,7 +38,10 @@ eula.txt
 banned-players.json
 banned-ips.json
 world/**
-saves/**
+saves/*
+!saves/New World
+saves/New World/*
+!saves/New World/datapacks
 mods/**
 modelworks/**
 logs/**

@@ -1,0 +1,30 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+       {
+           "item": "minecraft:stone"
+       },
+       {
+           "item": "minecraft:red_dye"
+       },
+       {
+           "item": "minecraft:green_dye"
+       },
+       {
+           "item": "minecraft:glass_pane"
+       }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:crafting_component",
+        "count": 16,
+        "data": {
+            "CustomModelData": 4
+        }
+    }
+}

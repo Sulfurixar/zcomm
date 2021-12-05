@@ -9,6 +9,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import zener.zcomm.Main;
+import zener.zcomm.util.handCraft;
 
 public class infuser extends Item {
     
@@ -27,6 +28,14 @@ public class infuser extends Item {
         if (!tag.contains("v") || tag.getBoolean("v") == false) {
             user.sendMessage(new TranslatableText(Main.identifier+".item_not_verified"), true);
             return super.use(world, user, hand);
+        }
+
+        if (!world.isClient()) {
+
+            if (user.getStackInHand(Hand.OFF_HAND).getItem() == Main.INFUSER) {
+                handCraft.craft(world, user);
+            }
+
         }
 
         return super.use(world, user, hand);

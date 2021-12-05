@@ -1,0 +1,21 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+       {
+           "item": "minecraft:obsidian"
+       }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:crafting_component",
+        "count": 8,
+        "data": {
+            "CustomModelData": 1
+        }
+    }
+}

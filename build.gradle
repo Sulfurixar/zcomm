@@ -45,7 +45,8 @@ dependencies {
 	modImplementation include("io.github.cottonmc:LibGui:${project.libgui_version}")
 
 	// luckperms
-	modImplementation 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
+	modImplementation include('me.lucko:fabric-permissions-api:0.1-SNAPSHOT')
+
 }
 
 processResources {

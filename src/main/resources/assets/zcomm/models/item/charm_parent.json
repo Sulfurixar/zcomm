@@ -1,41 +1,47 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "zcomm:item/krusha"
+	},
 	"elements": [
 		{
 			"name": "Charm",
 			"from": [7, 5, 7.975],
 			"to": [9, 7, 8],
-			"color": 5,
 			"faces": {
-				"north": {"uv": [0, 0, 2, 2], "texture": "#missing"},
-				"east": {"uv": [0, 0, 0.025, 2], "texture": "#missing"},
-				"south": {"uv": [0, 0, 2, 2], "texture": "#missing"},
-				"west": {"uv": [0, 0, 0.025, 2], "texture": "#missing"},
-				"up": {"uv": [0, 0, 2, 0.025], "texture": "#missing"},
-				"down": {"uv": [0, 0, 2, 0.025], "texture": "#missing"}
+				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"east": {"uv": [0, 0, 0, 0], "texture": "#0"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 0, 0], "texture": "#0"},
+				"up": {"uv": [0, 0, 0, 0], "texture": "#0"},
+				"down": {"uv": [0, 0, 0, 0], "texture": "#0"}
 			}
 		}
 	],
 	"gui_light": "front",
 	"display": {
 		"thirdperson_righthand": {
-			"translation": [-1.5, 2.25, 0]
+			"translation": [-2, 4.25, 0],
+			"scale": [2, 2, 0]
 		},
 		"thirdperson_lefthand": {
-			"translation": [-1.5, 2.25, 0]
+			"translation": [-2, 4.25, 0],
+			"scale": [2, 2, 0]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, -6, 0],
-			"translation": [2.25, 6.5, 0],
-			"scale": [2, 2, 2]
+			"translation": [2.25, 11, 0],
+			"scale": [4, 4, 0]
 		},
 		"firstperson_lefthand": {
 			"rotation": [0, -6, 0],
-			"translation": [2.25, 6.5, 0],
-			"scale": [2, 2, 2]
+			"translation": [2.25, 11, 0],
+			"scale": [4, 4, 0]
 		},
 		"ground": {
-			"translation": [0, 4, 0]
+			"translation": [0, 2, 0],
+			"scale": [2, 2, 0]
 		},
 		"gui": {
 			"translation": [0, 8.25, 0],
@@ -49,7 +55,7 @@
 		"fixed": {
 			"rotation": [0, -180, 0],
 			"translation": [0.25, 8.5, -0.25],
-			"scale": [4, 4, 4]
+			"scale": [4, 4, 0]
 		}
 	}
 }

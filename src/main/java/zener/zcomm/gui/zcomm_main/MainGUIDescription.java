@@ -58,6 +58,7 @@ public class MainGUIDescription extends SyncedGuiDescription {
 
     private void setupDisplay(PlayerInventory playerInventory, ItemStack zcommItemStack, WGridPanel root) {
 
+
         NbtCompound tag = zcommItemStack.getOrCreateNbt();
         PlayerEntity player = playerInventory.player;
         String name = player.getName().asString();

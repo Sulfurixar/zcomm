@@ -4,7 +4,6 @@
 	"textures": {
 		"0": "zcomm:item/d"
 	},
-	"gui_light": "front",
 	"elements": [
 		{
 			"name": "Backpanel",
@@ -1127,6 +1126,7 @@
 			}
 		}
 	],
+	"gui_light": "front",
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, -180, 0],

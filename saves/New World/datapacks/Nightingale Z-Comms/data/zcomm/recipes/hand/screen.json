@@ -1,0 +1,21 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+       {
+           "item": "minecraft:green_stained_glass"
+       }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:crafting_component",
+        "count": 16,
+        "data": {
+            "CustomModelData": 3
+        }
+    }
+}

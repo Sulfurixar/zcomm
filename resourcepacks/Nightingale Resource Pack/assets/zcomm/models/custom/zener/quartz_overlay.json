@@ -1,0 +1,6 @@
+{
+	"parent": "zcomm:item/casing_parent",
+	"textures": {
+		"1": "zcomm:custom/zener/d_2"
+	}
+}

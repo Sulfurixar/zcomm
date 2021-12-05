@@ -135,7 +135,7 @@ public class Data {
 
                     tData tdata = new tData((PlayerEntity)player, (byte)2);
 
-                    source.sendFeedback(new LiteralText("Player: " + player.getName().toString() + "; Passcode: " + tdata.get_hash()), false);
+                    source.sendFeedback(new LiteralText("Passcode: " + tdata.get_hash()), false);
                     return Command.SINGLE_SUCCESS;
                 }
 

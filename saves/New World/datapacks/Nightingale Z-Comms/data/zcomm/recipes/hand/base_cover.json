@@ -1,0 +1,26 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+        {
+            "item": "zcomm:crafting_component",
+            "data": {
+                "CustomModelData": 1
+            }
+        },
+        {
+            "item": "zcomm:crafting_component",
+            "data": {
+                "CustomModelData": 2
+            }
+        }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:casing"
+    }
+}

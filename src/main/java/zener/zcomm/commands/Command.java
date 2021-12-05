@@ -2,6 +2,7 @@ package zener.zcomm.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
@@ -12,6 +13,8 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.NbtCompoundArgumentType;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import zener.zcomm.Main;
@@ -36,6 +39,9 @@ public class Command{
                 LiteralCommandNode<ServerCommandSource> verifyHelpNode = literalBuilder("help", Main.identifier+".verify", Verify::verifyHelp);
                 verifyNode.addChild(verifyHelpNode);
 
+                ArgumentCommandNode<ServerCommandSource, NbtCompound> verifyNbtNode = CommandManager.argument("nbt", NbtCompoundArgumentType.nbtCompound()).requires(Permissions.require(Main.identifier+".retrieve", 4)).executes(Verify::verifyNbt).build();
+                verifyNode.addChild(verifyNbtNode);
+
             // zcomms retrieve
             LiteralCommandNode<ServerCommandSource> retrieveNode = literalBuilder("retrieve", Main.identifier+".retrieve", Retrieve::retrieve);
             zcommsNode.addChild(retrieveNode);
@@ -43,6 +49,10 @@ public class Command{
                 // zcomms retrieve nr
                 ArgumentCommandNode<ServerCommandSource, Integer> retrieveArgNode = CommandManager.argument("nr", IntegerArgumentType.integer(0, 999)).requires(Permissions.require(Main.identifier+".retrieve", 4)).executes(Retrieve::retrieveArg).build();
                 retrieveNode.addChild(retrieveArgNode);
+
+                // zcomms retrieve id
+                ArgumentCommandNode<ServerCommandSource, String> retrieveArgIDNode = CommandManager.argument("id", StringArgumentType.word()).suggests(new commIDProvider()).requires(Permissions.require(Main.identifier+".retrieve", 4)).executes(Retrieve::retrieveArgID).build();
+                retrieveNode.addChild(retrieveArgIDNode);
 
             // zcomms help
             LiteralCommandNode<ServerCommandSource> helpNode = literalBuilder("help", Main.identifier+".help", Help::help);

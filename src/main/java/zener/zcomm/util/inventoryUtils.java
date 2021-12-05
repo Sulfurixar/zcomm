@@ -1,9 +1,13 @@
 package zener.zcomm.util;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -90,5 +94,15 @@ public class inventoryUtils {
         }
 
         return inventory;
+    }
+
+    public static List<ItemStack> getHandCraftingItems(Inventory inv) {
+        List<ItemStack> inputList = new ArrayList<>();
+        inputList.add(inv.getStack((byte)40));
+        for (int i = 0; i < 10; i++) {
+            inputList.add(inv.getStack(i));
+        }
+
+        return inputList;
     }
 }

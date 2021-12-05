@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.command.argument.NbtCompoundArgumentType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -49,6 +50,36 @@ public class Verify {
 
         return Command.SINGLE_SUCCESS;
 
+    }
+
+    public static int verifyNbt(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity technician = source.getPlayer();
+        String technician_uuid = technician.getUuidAsString();
+
+        if (!dataHandler.checkTEntry(technician_uuid)) {
+            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
+            return Command.SINGLE_SUCCESS;
+        }
+
+        if (!dataHandler.data.techData.get(technician_uuid).isHeadTechnician) {
+            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
+            return Command.SINGLE_SUCCESS;
+        }
+
+        NbtCompound nbt = NbtCompoundArgumentType.getNbtCompound(context, "nbt");
+        Iterable<ItemStack> stacks = technician.getItemsHand();
+        stacks.iterator().forEachRemaining(stack -> {
+            NbtCompound tag = stack.getOrCreateNbt();
+            for (String key : nbt.getKeys()) {
+                tag.put(key, nbt.get(key));
+            }
+            stack.setNbt(tag);
+            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.success").append(stack.getName()), false);
+        });
+
+
+        return Command.SINGLE_SUCCESS;
     }
 
     public static int verifyHelp(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {

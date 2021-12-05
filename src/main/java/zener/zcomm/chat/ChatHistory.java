@@ -87,7 +87,6 @@ public class ChatHistory {
 
     public boolean handleText(Text text) {
         String _text = text.asString();
-        System.out.println(_text);
 
         if (!_text.startsWith(Main.ZCOMM_COMMUNICATION_IDENTIFIER)) 
             return false;

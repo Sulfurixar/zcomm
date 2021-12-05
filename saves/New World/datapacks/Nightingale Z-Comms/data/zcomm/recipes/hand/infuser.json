@@ -1,0 +1,26 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+       {
+           "item": "minecraft:nether_star"
+       },
+       {
+           "item": "minecraft:iron_ingot"
+       },
+       {
+           "item": "minecraft:iron_ingot"
+       },
+       {
+           "item": "minecraft:iron_ingot"
+       },
+       {
+           "item": "minecraft:iron_ingot"
+       }
+    ],
+    "catalyst": {
+        "item": "zcomm:handcrafter"
+    },
+    "result": {
+        "item": "zcomm:infuser"
+    }
+}

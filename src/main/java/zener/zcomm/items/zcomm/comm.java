@@ -24,6 +24,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import zener.zcomm.Main;
 import zener.zcomm.data.charmData;
+import zener.zcomm.data.dataHandler;
 import zener.zcomm.entities.charmProjectile;
 import zener.zcomm.gui.zcomm_inventory.InvGUIDescription;
 import zener.zcomm.gui.zcomm_main.MainGUIDescription;
@@ -41,6 +42,44 @@ public class comm extends Item {
         // check if the item has a generated ID
         ItemStack zcommItemStack = user.getStackInHand(hand);
         NbtCompound tag = zcommItemStack.getOrCreateNbt();
+
+        
+        // DO A CLEAN-UP IN CASE NO UUID
+        if (!tag.contains("UUID")) {
+            if (!world.isClient()) {
+                if (tag.contains("Owner")) {
+                    tag.putString("dOwner", tag.getString("Owner"));
+                    tag.remove("Owner");
+                }
+                if (tag.contains("NR")) {
+                    tag.putString("dNR", tag.getString("NR"));
+                    tag.remove("NR");
+                }
+                zcommItemStack.setNbt(tag);
+                user.getInventory().markDirty();
+            }
+        } else {
+            // CHECK IF IT'S A VALID UUID
+            if (!world.isClient()) {
+                String uuid = tag.getString("UUID");
+                // ILLEGAL
+                if (uuid != null && !uuid.isEmpty() && dataHandler.data.commData.get(uuid) == null) {
+                    if (tag.contains("Owner")) {
+                        tag.putString("dOwner", tag.getString("Owner"));
+                        tag.remove("Owner");
+                    }
+                    if (tag.contains("v")) {
+                        tag.remove("v");
+                    }
+                    if (tag.contains("NR")) {
+                        tag.putString("dNR", tag.getString("NR"));
+                        tag.remove("NR");
+                    }
+                    zcommItemStack.setNbt(tag);
+                    user.getInventory().markDirty();
+                }
+            }
+        }
 
         //check item verification
         if (!tag.contains("v") || tag.getBoolean("v") == false) {

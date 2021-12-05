@@ -28,8 +28,10 @@ import zener.zcomm.items.zcomm.casing;
 import zener.zcomm.items.zcomm.charm;
 import zener.zcomm.items.zcomm.comm;
 import zener.zcomm.items.zcomm.craftingComponent;
+import zener.zcomm.items.zcomm.handCrafter;
 import zener.zcomm.items.zcomm.infuser;
 import zener.zcomm.items.zcomm.upgrade;
+import zener.zcomm.recipes.RecipeTypesRegistry;
 
 
 
@@ -43,13 +45,15 @@ public class Main implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-
 		Registry.register(Registry.ITEM, ZCOMM_IDENTIFIER, ZCOMM);
 		Registry.register(Registry.ITEM, CHARM_IDENTIFIER, CHARM);
 		Registry.register(Registry.ITEM, CASING_IDENTIFIER, CASING);
 		Registry.register(Registry.ITEM, UPGRADE_IDENTIFIER, UPGRADE);
 		Registry.register(Registry.ITEM, CRAFTING_COMPONENT_IDENTIFIER, CRAFTING_COMPONENT);
 		Registry.register(Registry.ITEM, INFUSER_IDENTIFIER, INFUSER);
+		Registry.register(Registry.ITEM, HAND_CRAFTER_IDENTIFIER, HANDCRAFTER);
+
+		RecipeTypesRegistry.registerAll();
 
 		CommandRegistrationCallback.EVENT.register(Command::register);
 
@@ -73,6 +77,7 @@ public class Main implements ModInitializer {
 	public static final Identifier UPGRADE_IDENTIFIER = new Identifier(identifier, "upgrade");
 	public static final Identifier CRAFTING_COMPONENT_IDENTIFIER = new Identifier(identifier, "crafting_component");
 	public static final Identifier INFUSER_IDENTIFIER = new Identifier(identifier, "infuser");
+	public static final Identifier HAND_CRAFTER_IDENTIFIER = new Identifier(identifier, "handcrafter");
 	public static final String ZCOMM_TRANSLATION_KEY = Util.createTranslationKey("container", ZCOMM_IDENTIFIER);
 	public static final ItemGroup ZCOMM_GROUP = FabricItemGroupBuilder.create(
 		new Identifier(identifier, "general"))
@@ -85,6 +90,7 @@ public class Main implements ModInitializer {
 	public static Item UPGRADE = new upgrade(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item CRAFTING_COMPONENT = new craftingComponent(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item INFUSER = new infuser(new Item.Settings().group(ZCOMM_GROUP));
+	public static Item HANDCRAFTER = new handCrafter(new Item.Settings().group(ZCOMM_GROUP));
 
 	public static Item[] ITEMS = new Item[] {
 		ZCOMM, CHARM, CASING, UPGRADE, CRAFTING_COMPONENT, INFUSER
@@ -114,6 +120,7 @@ public class Main implements ModInitializer {
 		dataHandler.serverLoad(server);
 	}
 
+	//// RECIPES
 	
 }
 
