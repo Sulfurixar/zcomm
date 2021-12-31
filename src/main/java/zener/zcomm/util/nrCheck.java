@@ -14,6 +14,9 @@ public class nrCheck {
 
     public nrCheck(String nr) {
         this.nr = nr;
+        if (nr == null) {
+            return;
+        }
 
         if (NumberUtils.isParsable(nr)) {
             this._nr = Integer.parseInt(nr);

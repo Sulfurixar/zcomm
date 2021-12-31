@@ -1,3 +1,9 @@
 {
-    "parent": "zcomm:item/crafting_component_parent"
+    "parent": "zcomm:item/crafting_component_parent",
+    "overrides": [
+        { "predicate": {"custom_model_data": 1}, "model": "zcomm:item/obsidian_underlayer" },
+        { "predicate": {"custom_model_data": 2}, "model": "zcomm:item/quartz_overlay" },
+        { "predicate": {"custom_model_data": 3}, "model": "zcomm:item/screen" },
+        { "predicate": {"custom_model_data": 4}, "model": "zcomm:item/keyboard" }
+    ]
 }

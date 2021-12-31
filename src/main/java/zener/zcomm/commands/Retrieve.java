@@ -98,13 +98,12 @@ public class Retrieve {
                 ServerCommandSource source = context.getSource();
                 ServerPlayerEntity technician = source.getPlayer();
                 String technician_uuid = technician.getUuidAsString();
-                String id = StringArgumentType.getString(context, "ID");
+                String id = StringArgumentType.getString(context, "id");
 
                 if (!dataHandler.checkTEntry(technician_uuid)) {
                     source.sendFeedback(new TranslatableText("command."+Main.identifier+".retrieve.permissions_too_low"), false);
                     return Command.SINGLE_SUCCESS;
                 }
-
                 if (!dataHandler.data.commData.containsKey(id)) {
                     source.sendFeedback(new TranslatableText("command."+Main.identifier+".retrieve.no_comm"), false);
                     return Command.SINGLE_SUCCESS;

@@ -59,8 +59,10 @@ public class ChatWidget extends WWidget {
             String message = hist.getMessage(text);
             String sender = hist.getSender(text);
             String recipient = hist.getReceiver(text);
+            String as = hist.getAs(text);
             nrCheck sender_nr = new nrCheck(sender);
             nrCheck recipient_nr = new nrCheck(recipient);
+            nrCheck as_nr = new nrCheck(as);
             if (sender_nr.getNr() != comm_nr && recipient_nr.getNr() != comm_nr) {
                 if (sender_nr.getNr() != Main.GLOBAL_CHANNEL_NR && recipient_nr.getNr() != Main.GLOBAL_CHANNEL_NR)
                     continue;
@@ -68,12 +70,21 @@ public class ChatWidget extends WWidget {
             String sent_to = "";
             if (hist.getLast_channel(comm_nr) == Main.GLOBAL_CHANNEL_NR) {
                 if (recipient_nr.getNr() != Main.GLOBAL_CHANNEL_NR) {
-                    sent_to = String.format("->%s", recipient_nr.getNrStr());
+                    sent_to = "->"+recipient_nr.getNrStr();
                 } else {
                     sent_to = "->G";
                 }
             }
-            String new_message = String.format("[%s%s]: %s", sender_nr.getNrStr(), sent_to, message);
+            String new_message;
+            if (as == null || !as_nr.isValid()) {
+                new_message = String.format("[%s%s]: %s", sender_nr.getNrStr(), sent_to, message);
+            } else {
+                if (!sent_to.equals("")){
+                    new_message = String.format("[%s%s](as %s): %s", sender_nr.getNrStr(), sent_to, as, message);
+                } else {
+                    new_message = String.format("[%s->%s]: %s", sender_nr.getNrStr(), as, message);
+                }
+            }
             int length = new_message.length();
             if (sender_nr.getNr() == comm_nr) {
                 new_message = "§6" + new_message;

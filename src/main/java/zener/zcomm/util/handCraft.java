@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import zener.zcomm.Main;
 import zener.zcomm.recipes.HandRecipe;
 import zener.zcomm.recipes.RecipeTypesRegistry;
+import zener.zcomm.util.listIterator.EnumeratedItem;
 
 public class handCraft {
 
@@ -59,10 +60,11 @@ public class handCraft {
 
         boolean success = true;
         PlayerInventory inv = user.getInventory();
-        for (Ingredient ingredient : recipeList.get(0).getIngredients()) {
+        for (EnumeratedItem<Ingredient> ingredient : listIterator.enumerate(recipeList.get(0).getIngredients())) {
             boolean found = false;
             for (int i = 0; i < 9; i++) {
-                if (ingredient.test(inv.getStack(i))) {
+                if (ingredient.item.test(inv.getStack(i)) && RecipeMatcher.checkNbt(recipeList.get(0).getData().get(ingredient.index), inv.getStack(i).getOrCreateNbt())){
+                    
                     found = true;
                     ItemStack item = inv.getStack(i);
                     if (item.getCount() > 1) {
@@ -74,7 +76,7 @@ public class handCraft {
                 }
             }
             if (!found) {
-                if (ingredient.test(inv.getStack(40))) {
+                if (ingredient.item.test(inv.getStack(40))) {
                     found = true;
                     ItemStack item = inv.getStack(40);
                     if (item.getCount() > 1) {

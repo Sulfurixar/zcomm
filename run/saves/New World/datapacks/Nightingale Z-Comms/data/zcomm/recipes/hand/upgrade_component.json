@@ -1,0 +1,30 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+        {
+            "item": "minecraft:redstone_dust"
+        },
+        {
+            "item": "minecraft:iron_nugget"
+        },
+        {
+            "item": "minecraft:iron_nugget"
+        },
+        {
+            "item": "minecraft:iron_nugget"
+        },
+        {
+            "item": "minecraft:quartz"
+        }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:upgrade",
+        "count": 6
+    }
+}

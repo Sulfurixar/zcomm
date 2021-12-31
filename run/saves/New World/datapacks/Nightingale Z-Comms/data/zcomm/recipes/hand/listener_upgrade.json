@@ -1,0 +1,45 @@
+{
+    "type": "zcomm:hand",
+    "ingredients": [
+        {
+            "item": "zcomm:upgrade"
+        },
+        {
+            "item": "zcomm:upgrade"
+        },
+        {
+            "item": "zcomm:upgrade"
+        },
+        {
+            "item": "zcomm:upgrade"
+        },
+        {
+            "item": "minecraft:lapis_lazuli"
+        },
+        {
+            "item": "minecraft:lapis_lazuli"
+        },
+        {
+            "item": "minecraft:lapis_lazuli"
+        },
+        {
+            "item": "minecraft:lapis_lazuli"
+        },
+        {
+            "item": "minecraft:ender_pearl"
+        }
+    ],
+    "catalyst": {
+        "item": "zcomm:infuser",
+        "data": {
+            "z": true
+        }
+    },
+    "result": {
+        "item": "zcomm:upgrade",
+        "data": {
+            "CustomModelData": 1
+        },
+        "count": 4
+    }
+}

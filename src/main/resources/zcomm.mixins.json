@@ -10,6 +10,9 @@
       "charmMixin",
       "ZItemRendererMixin"
     ],
+    "server": [
+      "mcserverMixin"
+    ],
     "injectors": {
       "defaultRequire": 1
     }

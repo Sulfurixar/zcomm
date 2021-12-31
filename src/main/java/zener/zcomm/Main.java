@@ -12,7 +12,6 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
@@ -69,6 +68,8 @@ public class Main implements ModInitializer {
 	public static final ScreenHandlerType<zcommNRGUIDescription> ZCOMM_NR_SCREEN_TYPE = ScreenHandlerRegistry.registerExtended(ZCOMM_NRIDENTIFIER, zcommNRGUIDescription::new);
 	public static final ScreenHandlerType<MainGUIDescription> ZCOMM_MAIN_SCREEN_TYPE = ScreenHandlerRegistry.registerExtended(ZCOMM_MAINIDENTIFIER, MainGUIDescription::new);
 
+	//// UPGRADE STUFF
+	public static int UPGRADE_MAXIMUM_DAMAGE = 100;
 
 	//// ITEMS
 	public static final Identifier ZCOMM_IDENTIFIER = new Identifier(identifier, "comm");
@@ -81,13 +82,13 @@ public class Main implements ModInitializer {
 	public static final String ZCOMM_TRANSLATION_KEY = Util.createTranslationKey("container", ZCOMM_IDENTIFIER);
 	public static final ItemGroup ZCOMM_GROUP = FabricItemGroupBuilder.create(
 		new Identifier(identifier, "general"))
-	.icon(() -> new ItemStack(Items.BOWL))
+	.icon(() -> new ItemStack(new comm(new Item.Settings())))
 	.build();
 
 	public static Item ZCOMM = new comm(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item CHARM = new charm(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item CASING = new casing(new Item.Settings().group(ZCOMM_GROUP));
-	public static Item UPGRADE = new upgrade(new Item.Settings().group(ZCOMM_GROUP));
+	public static Item UPGRADE = new upgrade(new Item.Settings().group(ZCOMM_GROUP).maxDamageIfAbsent(UPGRADE_MAXIMUM_DAMAGE));
 	public static Item CRAFTING_COMPONENT = new craftingComponent(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item INFUSER = new infuser(new Item.Settings().group(ZCOMM_GROUP));
 	public static Item HANDCRAFTER = new handCrafter(new Item.Settings().group(ZCOMM_GROUP));
@@ -119,8 +120,6 @@ public class Main implements ModInitializer {
 	public static void serverLoad(MinecraftServer server) {
 		dataHandler.serverLoad(server);
 	}
-
-	//// RECIPES
 	
 }
 

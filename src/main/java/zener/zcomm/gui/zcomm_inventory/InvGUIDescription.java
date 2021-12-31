@@ -21,11 +21,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.TranslatableText;
 import zener.zcomm.Main;
-import zener.zcomm.data.dataHandler;
-import zener.zcomm.data.playerData;
 import zener.zcomm.items.zcomm.comm;
 import zener.zcomm.util.inventoryUtils;
-import zener.zcomm.util.nrCheck;
 
 public class InvGUIDescription extends SyncedGuiDescription {
     
@@ -61,39 +58,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
         NbtCompound tag = zcommItemStack.getOrCreateNbt();
         NbtList inventoryTag = tag.getList("Inventory", NbtType.COMPOUND);
 
-        SimpleInventory inventory = new SimpleInventory(INVENTORY_SIZE) {
-            @Override
-            public void markDirty() {
-                if (playerInventory.player.world.isClient()) {
-                    return;
-                }
-                tag.put("Inventory", inventoryUtils.toTag(this));
-                NbtCompound coverTag = this.getStack(1).getOrCreateNbt();
-                if (!coverTag.contains("v") || coverTag.getBoolean("v") == false) {
-                    if (tag.contains("CustomModelData")){
-                        tag.remove("CustomModelData");
-                    }
-                } else { 
-                    if (coverTag.contains("CustomModelData")) {
-                        tag.putInt("CustomModelData", coverTag.getInt("CustomModelData"));
-                    }
-                }
-
-                if (tag.contains("UUID")){
-                    String uuid = tag.getString("UUID");
-                    playerData playerData = dataHandler.data.commData.get(uuid);
-                    if (playerData == null) {
-                        int nr = zcommItemStack.getOrCreateNbt().getInt("NR");
-                        dataHandler.addEntry(uuid, new playerData(playerInventory.player.getUuidAsString(), new nrCheck(nr).getNrStr(), "", "", new String[] { "", "", "", "", "", ""}));
-                    } else {
-                        playerData newPlayerData = new playerData(zcommItemStack, playerData.USER_ID);
-                        dataHandler.updateEntry(uuid, newPlayerData);
-                    }
-                }
-                
-                super.markDirty();
-            }
-        };
+        SimpleInventory inventory = new Inv(playerInventory, zcommItemStack, INVENTORY_SIZE);
 
         inventoryUtils.fromTag(inventoryTag, inventory);
 

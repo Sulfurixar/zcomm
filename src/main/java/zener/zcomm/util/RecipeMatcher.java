@@ -9,6 +9,25 @@ import net.minecraft.nbt.NbtByte;
 import net.minecraft.nbt.NbtCompound;
 
 public class RecipeMatcher {
+
+    public static boolean checkNbt(NbtCompound ingredientNbt, NbtCompound itemNbt) {
+
+        for (String key : ingredientNbt.getKeys()) {
+            byte type = ingredientNbt.get(key).getType();
+            if (type == NbtByte.COMPOUND_TYPE || type == NbtByte.BYTE_ARRAY_TYPE || type == NbtByte.INT_ARRAY_TYPE || type == NbtByte.LIST_TYPE || type == NbtByte.LONG_ARRAY_TYPE) {
+                continue;
+            }
+            if (!itemNbt.contains(key, type)) {
+                continue;
+            }
+            if (itemNbt.get(key) == ingredientNbt.get(key)) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
     
     public static <T> int[] findMatches(List<T> inputs, List<? extends Predicate<T>> tests, List<NbtCompound> IngredientData) {
 
@@ -34,23 +53,11 @@ public class RecipeMatcher {
                             break;
                     }
                     NbtCompound tag = ((ItemStack)inputs.get(y)).getOrCreateNbt();
-                    boolean found = false;
-                    for (String key : nbt.getKeys()) {
-                        byte type = nbt.get(key).getType();
-                        if (type == NbtByte.COMPOUND_TYPE || type == NbtByte.BYTE_ARRAY_TYPE || type == NbtByte.INT_ARRAY_TYPE || type == NbtByte.LIST_TYPE || type == NbtByte.LONG_ARRAY_TYPE) {
-                            continue;
-                        }
-                        if (!tag.contains(key, type)) {
-                            continue;
-                        }
-                        if (tag.get(key) == nbt.get(key)) {
-                            found = true;
-                            data.set(y);
-                            matched++;
-                            break;
-                        }
+                    if (checkNbt(nbt, tag)) {
+                        data.set(y);
+                        matched++;
+                        break;
                     }
-                    if (found) break;
                 }
             }
 

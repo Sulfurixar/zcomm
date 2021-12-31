@@ -41,11 +41,17 @@ dependencies {
 	// Gson - java to json and back
 	modImplementation "com.google.code.gson:gson:${project.gson_version}"
 
+	// Eclipse Collections
+	modApi 'org.eclipse.collections:eclipse-collections-api:11.0.0'
+	modImplementation include('org.eclipse.collections:eclipse-collections:11.0.0')
+
 	// LibGui
 	modImplementation include("io.github.cottonmc:LibGui:${project.libgui_version}")
 
 	// luckperms
-	modImplementation include('me.lucko:fabric-permissions-api:0.1-SNAPSHOT')
+	modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+	modApi 	"me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+	include	"me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
 
 }
 

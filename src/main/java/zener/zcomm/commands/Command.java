@@ -6,23 +6,38 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
+import java.util.function.Predicate;
 
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
+import net.minecraft.command.argument.NbtElementArgumentType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import zener.zcomm.Main;
 
 public class Command{
 
+    private static @NotNull Predicate<ServerCommandSource> require(String permission, int defaultRequireLevel) {
+        return player -> check(player, permission, defaultRequireLevel);
+    }
+
+    private static boolean check(@NotNull CommandSource source, @NotNull String permission, int defaultRequireLevel) {
+        if (source.hasPermissionLevel(defaultRequireLevel)) {return true; }
+        return Permissions.getPermissionValue(source, permission).orElse(false);
+    }
+
     private static LiteralCommandNode<ServerCommandSource> literalBuilder(String id, String name, com.mojang.brigadier.Command<ServerCommandSource> cmd) {
-        return CommandManager.literal(id).requires(Permissions.require(name, 4)).executes(cmd).build();
+        return CommandManager.literal(id).requires(require(name, 4)).executes(cmd).build();
     }
     
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {
@@ -39,7 +54,11 @@ public class Command{
                 LiteralCommandNode<ServerCommandSource> verifyHelpNode = literalBuilder("help", Main.identifier+".verify", Verify::verifyHelp);
                 verifyNode.addChild(verifyHelpNode);
 
-                ArgumentCommandNode<ServerCommandSource, NbtCompound> verifyNbtNode = CommandManager.argument("nbt", NbtCompoundArgumentType.nbtCompound()).requires(Permissions.require(Main.identifier+".retrieve", 4)).executes(Verify::verifyNbt).build();
+                // zcomms verify reset
+                LiteralCommandNode<ServerCommandSource> verifyResetNode = literalBuilder("reset", Main.identifier+".verify", Verify::verifyReset);
+                verifyNode.addChild(verifyResetNode);
+
+                ArgumentCommandNode<ServerCommandSource, NbtCompound> verifyNbtNode = CommandManager.argument("nbt", NbtCompoundArgumentType.nbtCompound()).requires(require(Main.identifier+".retrieve", 4)).executes(Verify::verifyNbt).build();
                 verifyNode.addChild(verifyNbtNode);
 
             // zcomms retrieve
@@ -47,11 +66,11 @@ public class Command{
             zcommsNode.addChild(retrieveNode);
 
                 // zcomms retrieve nr
-                ArgumentCommandNode<ServerCommandSource, Integer> retrieveArgNode = CommandManager.argument("nr", IntegerArgumentType.integer(0, 999)).requires(Permissions.require(Main.identifier+".retrieve", 4)).executes(Retrieve::retrieveArg).build();
+                ArgumentCommandNode<ServerCommandSource, Integer> retrieveArgNode = CommandManager.argument("nr", IntegerArgumentType.integer(0, 999)).requires(require(Main.identifier+".retrieve", 4)).executes(Retrieve::retrieveArg).build();
                 retrieveNode.addChild(retrieveArgNode);
 
                 // zcomms retrieve id
-                ArgumentCommandNode<ServerCommandSource, String> retrieveArgIDNode = CommandManager.argument("id", StringArgumentType.word()).suggests(new commIDProvider()).requires(Permissions.require(Main.identifier+".retrieve", 4)).executes(Retrieve::retrieveArgID).build();
+                ArgumentCommandNode<ServerCommandSource, String> retrieveArgIDNode = CommandManager.argument("id", StringArgumentType.word()).suggests(new commIDProvider()).requires(require(Main.identifier+".retrieve", 4)).executes(Retrieve::retrieveArgID).build();
                 retrieveNode.addChild(retrieveArgIDNode);
 
             // zcomms help
@@ -119,7 +138,7 @@ public class Command{
                     dataGetNode.addChild(dataGetUserNode);
 
                         //zcomms data get user player
-                        ArgumentCommandNode<ServerCommandSource, EntitySelector> dataGetUserArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(Permissions.require(Main.identifier+".data.get.user", 4)).executes(Data::getUserArg).build();
+                        ArgumentCommandNode<ServerCommandSource, EntitySelector> dataGetUserArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(require(Main.identifier+".data.get.user", 4)).executes(Data::getUserArg).build();
                         dataGetUserNode.addChild(dataGetUserArgNode);
 
                     // zcomms data get key
@@ -127,12 +146,21 @@ public class Command{
                     dataGetNode.addChild(dataGetTechnicianKeyNode);
 
                         //zcomms data get key player
-                        ArgumentCommandNode<ServerCommandSource, EntitySelector> dataGetTechnicianKeyArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(Permissions.require(Main.identifier+".data.get.key", 4)).executes(Data::getTechnicianKeyArg).build();
+                        ArgumentCommandNode<ServerCommandSource, EntitySelector> dataGetTechnicianKeyArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(require(Main.identifier+".data.get.key", 4)).executes(Data::getTechnicianKeyArg).build();
                         dataGetTechnicianKeyNode.addChild(dataGetTechnicianKeyArgNode);
 
                             //zcomms data get key player level
-                            ArgumentCommandNode<ServerCommandSource, Integer> dataGetTechnicianKeyArgArgNode = CommandManager.argument("level", IntegerArgumentType.integer(1, 2)).requires(Permissions.require(Main.identifier+"data.get.key", 4)).executes(Data::getTechnicianKeyArgArg).build();
+                            ArgumentCommandNode<ServerCommandSource, Integer> dataGetTechnicianKeyArgArgNode = CommandManager.argument("level", IntegerArgumentType.integer(1, 2)).requires(require(Main.identifier+".data.get.key", 4)).executes(Data::getTechnicianKeyArgArg).build();
                             dataGetTechnicianKeyArgNode.addChild(dataGetTechnicianKeyArgArgNode);
+
+                     // zcomms data get listener
+                     LiteralCommandNode<ServerCommandSource> dataGetListenerNode = literalBuilder("listener", Main.identifier+".data.get.listener", Data::getListener);
+                     dataGetNode.addChild(dataGetListenerNode);
+
+                        // zcomms data get listener [args]
+                        ArgumentCommandNode<ServerCommandSource, NbtElement> dataGetListenerArgsNode = CommandManager.argument("comm_nr_array", NbtElementArgumentType.nbtElement()).requires(require(Main.identifier+".data.get.listener", 4)).executes(Data::getListenerArgs).build();
+                        dataGetListenerNode.addChild(dataGetListenerArgsNode);
+
 
                 // zcomms data add
                 LiteralCommandNode<ServerCommandSource> dataAddNode = literalBuilder("add", Main.identifier+".add", Data::add);
@@ -151,11 +179,11 @@ public class Command{
                         dataAddTechnicianNode.addChild(dataAddTechnicianHelpNode);
 
                         // zcomms data add technician player
-                        ArgumentCommandNode<ServerCommandSource, EntitySelector> dataAddTechnicianArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(Permissions.require(Main.identifier+".add.technician", 4)).executes(Data::addTechnicianArg).build();
+                        ArgumentCommandNode<ServerCommandSource, EntitySelector> dataAddTechnicianArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(require(Main.identifier+".add.technician", 4)).executes(Data::addTechnicianArg).build();
                         dataAddTechnicianNode.addChild(dataAddTechnicianArgNode);
 
                             // zcomms data add technician player password
-                            ArgumentCommandNode<ServerCommandSource, String> dataAddTechnicianArgArgNode = CommandManager.argument("passcode", word()).requires(Permissions.require(Main.identifier+".add.technician", 4)).executes(Data::addTechnicianArgArg).build();
+                            ArgumentCommandNode<ServerCommandSource, String> dataAddTechnicianArgArgNode = CommandManager.argument("passcode", word()).requires(require(Main.identifier+".add.technician", 4)).executes(Data::addTechnicianArgArg).build();
                             dataAddTechnicianArgNode.addChild(dataAddTechnicianArgArgNode);
 
                 //zcomms data remove
@@ -167,7 +195,7 @@ public class Command{
                     dataRemoveNode.addChild(dataRemoveHelpNode);
 
                     // zcomms data remove technician player
-                    ArgumentCommandNode<ServerCommandSource, EntitySelector> dataRemoveTechnicianArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(Permissions.require(Main.identifier+".data.remove.technician", 4)).executes(Data::removeTechnicianArg).build();
+                    ArgumentCommandNode<ServerCommandSource, EntitySelector> dataRemoveTechnicianArgNode = CommandManager.argument("player", EntityArgumentType.player()).requires(require(Main.identifier+".data.remove.technician", 4)).executes(Data::removeTechnicianArg).build();
                     dataRemoveNode.addChild(dataRemoveTechnicianArgNode);
 
 

@@ -105,11 +105,13 @@ public class zcommNRGUIDescription extends SyncedGuiDescription {
 
         ScreenNetworking.of(this, NetworkSide.CLIENT).receive(new Identifier(Main.identifier, "nr_taken"), buf -> {
             NR_Field.setText("");
+            NR_Field.releaseFocus();
             NR_Field.setSuggestion("NR Taken");
         });
 
         ScreenNetworking.of(this, NetworkSide.CLIENT).receive(new Identifier(Main.identifier, "available"), buf -> {
             NR_Field.setText("");
+            NR_Field.releaseFocus();
             NR_Field.setSuggestion("NR Set");
             playerInventory.markDirty();
         });

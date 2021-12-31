@@ -1,6 +1,12 @@
 package zener.zcomm.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.Command;
@@ -8,8 +14,17 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import org.eclipse.collections.impl.list.Interval;
+
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.NbtElementArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtIntArray;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.predicate.NumberRange;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,6 +34,7 @@ import zener.zcomm.Main;
 import zener.zcomm.data.dataHandler;
 import zener.zcomm.data.playerData;
 import zener.zcomm.data.tData;
+import zener.zcomm.util.channelEncoder;
 
 public class Data {
 
@@ -41,6 +57,151 @@ public class Data {
             source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.help"), false);
             return Command.SINGLE_SUCCESS;
         }
+
+            // GET LISTENER CODE
+            public static int getListener(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+                ServerCommandSource source = context.getSource();
+
+                source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener"), false);
+                return Command.SINGLE_SUCCESS;
+            }
+
+                private static boolean isValidNr(int nr) {
+                    return nr >= 0 && nr < 1000;
+                }
+
+                // 0 - not a NumberRange or Integer, 1 - NumberRange, 2 - Integer
+                private static int determineDatatype(String data) {
+                    if (data.contains("..")) {
+                        String[] nrs = data.split("\\.\\.");
+                        if (nrs.length != 2) return 0;
+                        for (String nr : nrs) {
+                            try {
+                                int a = Integer.parseInt(nr);
+                                if (!isValidNr(a)) return 0;
+                            } catch (NumberFormatException e) {
+                                return 0;
+                            }
+                        }
+                        return 1;
+                    }
+                    try {
+                        int a = Integer.parseInt(data);
+                        if (!isValidNr(a)) return 0;
+                        return 2;
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+                }
+
+                private static NumberRange<Integer> getNumberRange(String data) {
+                    String[] nrs = data.split("\\.\\.");
+                    int nr0 = Integer.parseInt(nrs[0]);
+                    int nr1 = Integer.parseInt(nrs[1]);
+                    NumberRange<Integer> range = new NumberRange<Integer>(nr0, nr1) {};
+                    return range;
+                }
+
+                // GET LISTENER CODE FROM IDS
+                public static int getListenerArgs(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+                    ServerCommandSource source = context.getSource();
+                    NbtElement element = NbtElementArgumentType.getNbtElement(context, "comm_nr_array");
+                    System.out.println(element.toString());
+                    if (element.getType() != NbtType.LIST && element.getType() != NbtType.INT && element.getType() != NbtType.INT_ARRAY && element.getType() != NbtType.STRING) {
+                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.incorrect_datatype"), false);
+                        return Command.SINGLE_SUCCESS;
+                    }
+
+                    List<Integer> range = new ArrayList<Integer>();
+
+                    if (element.getType() == NbtType.STRING) {
+                        String data = element.asString();
+                        int dt = determineDatatype(data);
+                        switch (dt) {
+
+                            case 1:
+                                NumberRange<Integer> _range = getNumberRange(data);
+                                List<Integer> __range = Interval.fromTo(_range.getMin(), _range.getMax());
+                                range = Stream.of(range, __range).flatMap(Collection::stream).collect(Collectors.toList());
+                                break;
+
+                            case 2:
+                                range.add(Integer.parseInt(data));
+                                break;
+
+                            default:
+                                source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.incorrect_datatype").append(": " + data), false);
+                                return Command.SINGLE_SUCCESS;
+                        }
+
+                        channelEncoder.Encoding cencoder = new channelEncoder().getEncoding(range.stream().mapToInt(i->i).toArray());
+                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.result").append(": " + cencoder.getCodec()), false);
+                        return Command.SINGLE_SUCCESS;
+                    }
+
+                    if (element.getType() == NbtType.INT) {
+                        int v = ((NbtInt)element).intValue();
+                        if (!isValidNr(v)) {
+                            source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.incorrect_datatype").append(": " + v), false);
+                            return Command.SINGLE_SUCCESS;
+                        }
+                        range.add(v);
+                        channelEncoder.Encoding cencoder = new channelEncoder().getEncoding(range.stream().mapToInt(i->i).toArray());
+                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.result").append(": " + cencoder.getCodec()), false);
+                        return Command.SINGLE_SUCCESS;
+                    }
+
+                    if (element.getType() == NbtType.INT_ARRAY) {
+                        range = Arrays.stream(((NbtIntArray)element).stream().mapToInt(i->i.intValue()).toArray()).filter(i -> i >= 0 && i < 1000).boxed().collect(Collectors.toList());
+                        channelEncoder.Encoding cencoder = new channelEncoder().getEncoding(range.stream().mapToInt(i->i).toArray());
+                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.result").append(": " + cencoder.getCodec()), false);
+                        return Command.SINGLE_SUCCESS;
+                    }
+
+                    if (element.getType() == NbtType.LIST) {
+                        for (NbtElement e : (NbtList)element) {
+                            if (e.getType() != NbtType.INT && e.getType() != NbtType.STRING) {
+                                source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.incorrect_datatype").append(": " + e.asString()), false);
+                                return Command.SINGLE_SUCCESS;
+                            }
+                            if (e.getType() == NbtType.INT) {
+                                int v = ((NbtInt)e).intValue();
+                                if (!isValidNr(v)) {
+                                    source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.incorrect_datatype").append(": " + v), false);
+                                    return Command.SINGLE_SUCCESS;
+                                }
+                                range.add(v);
+                            }
+                            
+                            if (e.getType() == NbtType.STRING) {
+                                String data = e.asString();
+                                int dt = determineDatatype(data);
+                                switch (dt) {
+
+                                    case 1:
+                                        NumberRange<Integer> _range = getNumberRange(data);
+                                        List<Integer> __range = Interval.fromTo(_range.getMin(), _range.getMax());
+                                        range = Stream.of(range, __range).flatMap(Collection::stream).collect(Collectors.toList());
+                                        break;
+
+                                    case 2:
+                                        range.add(Integer.parseInt(data));
+                                        break;
+
+                                    default:
+                                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.incorrect_datatype").append(": " + data), false);
+                                        return Command.SINGLE_SUCCESS;
+                                }
+                            }
+                        }
+                        channelEncoder.Encoding cencoder = new channelEncoder().getEncoding(range.stream().mapToInt(i->i).toArray());
+                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener.result").append(": " + cencoder.getCodec()), false);
+                        return Command.SINGLE_SUCCESS;
+                    }
+
+                    source.sendFeedback(new TranslatableText("command."+Main.identifier+".data.get.listener"), false);
+                    return Command.SINGLE_SUCCESS;
+                }
 
             // GET PLAYER COMM DATA
             public static int getUser(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {

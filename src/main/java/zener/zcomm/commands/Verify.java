@@ -62,11 +62,6 @@ public class Verify {
             return Command.SINGLE_SUCCESS;
         }
 
-        if (!dataHandler.data.techData.get(technician_uuid).isHeadTechnician) {
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
-            return Command.SINGLE_SUCCESS;
-        }
-
         NbtCompound nbt = NbtCompoundArgumentType.getNbtCompound(context, "nbt");
         Iterable<ItemStack> stacks = technician.getItemsHand();
         stacks.iterator().forEachRemaining(stack -> {
@@ -95,6 +90,28 @@ public class Verify {
         source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify"), false);
 
         return Command.SINGLE_SUCCESS;
+
+    }
+
+    public static int verifyReset(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity technician = source.getPlayer();
+        String technician_uuid = technician.getUuidAsString();
+
+        if (!dataHandler.checkTEntry(technician_uuid)) {
+            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
+            return Command.SINGLE_SUCCESS;
+        }
+
+        Iterable<ItemStack> stacks = technician.getItemsHand();
+        stacks.iterator().forEachRemaining(stack -> {
+            stack.setNbt(new NbtCompound());
+            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.success").append(stack.getName()), false);
+        });
+
+
+        return Command.SINGLE_SUCCESS;
+
 
     }
     

@@ -18,9 +18,6 @@
         },
         {
             "item": "minecraft:iron_ingot"
-        },
-        {
-            "item": "zcomm:infuser"
         }
     ],
     "catalyst": {
