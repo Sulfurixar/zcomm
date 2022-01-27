@@ -83,7 +83,7 @@ public class MainGUIDescription extends SyncedGuiDescription {
         });
 
         ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.identifier, Main.identifier+"_message"), buf -> {
-            playerInventory.player.getServer().getPlayerManager().broadcast(new LiteralText(buf.readString()), MessageType.CHAT, buf.readUuid());
+            playerInventory.player.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(buf.readString()), MessageType.CHAT, buf.readUuid());
         });
 
         if (player.world.isClient()) {

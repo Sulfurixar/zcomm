@@ -4,8 +4,8 @@ plugins {
 	id "io.freefair.lombok" version "6.0.0-m2"
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -38,8 +38,6 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 
 	// OWN dependencies
-	// Gson - java to json and back
-	modImplementation "com.google.code.gson:gson:${project.gson_version}"
 
 	// Eclipse Collections
 	modApi 'org.eclipse.collections:eclipse-collections-api:11.0.0'
@@ -71,7 +69,7 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 
 	// Minecraft 1.17 (21w19a) upwards uses Java 16.
-	it.options.release = 17
+	it.options.release = 16
 }
 
 java {
