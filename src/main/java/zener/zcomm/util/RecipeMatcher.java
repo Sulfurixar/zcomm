@@ -12,6 +12,10 @@ public class RecipeMatcher {
 
     public static boolean checkNbt(NbtCompound ingredientNbt, NbtCompound itemNbt) {
 
+        if (ingredientNbt.isEmpty()) {
+            return true;
+        }
+
         for (String key : ingredientNbt.getKeys()) {
             byte type = ingredientNbt.get(key).getType();
             if (type == NbtByte.COMPOUND_TYPE || type == NbtByte.BYTE_ARRAY_TYPE || type == NbtByte.INT_ARRAY_TYPE || type == NbtByte.LIST_TYPE || type == NbtByte.LONG_ARRAY_TYPE) {
