@@ -34,15 +34,7 @@ public class zcommNRGUIDescription extends SyncedGuiDescription {
 
     public zcommNRGUIDescription(int syncId, PlayerInventory playerInventory, ItemStack zcommItemStack) {
         super(Main.ZCOMM_NR_SCREEN_TYPE, syncId, playerInventory);
-
-        NbtCompound tag = zcommItemStack.getOrCreateNbt();  
-        if (!tag.contains("UUID")) {
-            UUID uuid = UUID.randomUUID();
-            // check for database in case of UUID conflicts
-            tag.put("UUID", NbtString.of(uuid.toString()));
-            zcommItemStack.setNbt(tag);
-        }
-
+        
         WGridPanel root = new WGridPanel();
         root.setInsets(new Insets(10, 10, 10, 10));
         setRootPanel(root);
@@ -83,10 +75,19 @@ public class zcommNRGUIDescription extends SyncedGuiDescription {
             if (nrcheck.nrTaken()) {
                 ScreenNetworking.of(this, NetworkSide.SERVER).send(new Identifier(Main.identifier, "nr_taken"), buf2 -> {});
             } else {
-                zcommItemStack.getOrCreateNbt().put("NR", NbtInt.of(nr));
-                zcommItemStack.getOrCreateNbt().put("Owner", NbtString.of(playerInventory.player.getName().asString()));
+                NbtCompound tag = zcommItemStack.getOrCreateNbt();
+                tag.put("NR", NbtInt.of(nr));
+                tag.put("Owner", NbtString.of(playerInventory.player.getName().asString()));
                 // try to get playerData for this comm
-                String uuid = zcommItemStack.getNbt().getString("UUID");
+                String uuid;
+                if (!tag.contains("UUID")) {
+                    UUID _uuid = UUID.randomUUID();
+                    uuid = _uuid.toString();
+                    // check for database in case of UUID conflicts
+                    tag.put("UUID", NbtString.of(_uuid.toString()));
+                } else {
+                    uuid = zcommItemStack.getNbt().getString("UUID");
+                }
                 try {
                     playerData playerData = dataHandler.data.commData.get(uuid);
                     if (playerData == null) {
