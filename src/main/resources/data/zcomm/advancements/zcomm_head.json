@@ -2,7 +2,7 @@
     "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
     "display": {
         "title": {
-            "text": "    EECHT    ",
+            "text": "    ZSCHT    ",
             "color": "gold",
             "bold": true
         },
@@ -11,7 +11,7 @@
                 "text":" [","bold":true,"italic":true,"color":"dark_red"
             },
             {
-                "text":"Echelon Electronics Certified Head Technician","bold":true,"italic":true,"color":"gold"
+                "text":"Zenerium Solutions Certified Head Technician","bold":true,"italic":true,"color":"gold"
             },
             {
                 "text":"]","bold":true,"italic":true,"color":"dark_red"

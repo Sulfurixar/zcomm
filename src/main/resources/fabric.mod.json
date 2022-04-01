@@ -3,10 +3,10 @@
     "id": "zcomm",
     "version": "${version}",
   
-    "name": "Nightingale Communications Device Mod",
-    "description": "Communications device mod for Nightingale server.",
+    "name": "Zenerium Solutions Communications Device Mod",
+    "description": "Communications device mod.",
     "authors": [
-      "Me!"
+      "Zener"
     ],
     "contact": {
     },
@@ -28,7 +28,7 @@
     ],
   
     "depends": {
-      "fabricloader": ">=0.11.3",
+      "fabricloader": ">=0.13.2",
       "fabric": "*",
       "fabric-permissions-api-v0": "*",
       "minecraft": "1.17.1",
