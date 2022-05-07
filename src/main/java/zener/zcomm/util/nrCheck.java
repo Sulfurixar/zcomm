@@ -2,8 +2,9 @@ package zener.zcomm.util;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import net.minecraft.server.MinecraftServer;
 import zener.zcomm.Main;
-import zener.zcomm.data.dataHandler;
+import zener.zcomm.components.ComponentHandler;
 
 public class nrCheck {
     
@@ -54,8 +55,8 @@ public class nrCheck {
         return this._nr < 0;
     }
 
-    public boolean nrTaken() {
-        boolean checknr = dataHandler.checkNR(this._nr, dataHandler.data);
+    public boolean nrTaken(MinecraftServer server) {
+        boolean checknr = ComponentHandler.isNrFree(server, _nr);
         return (!checknr || _nr == Main.GLOBAL_CHANNEL_NR);
     }
 

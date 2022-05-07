@@ -26,7 +26,7 @@ public class infuser extends Item {
 
         //check item verification
         if (!tag.contains("v") || tag.getBoolean("v") == false) {
-            user.sendMessage(new TranslatableText(Main.identifier+".item_not_verified"), true);
+            user.sendMessage(new TranslatableText(Main.ID+".item_not_verified"), true);
             return super.use(world, user, hand);
         }
 

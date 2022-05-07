@@ -52,7 +52,7 @@ public class NRConfirm implements Runnable {
             return;
         }
 
-        ScreenNetworking.of(zcommNRGUIDescription, NetworkSide.CLIENT).send(new Identifier(Main.identifier, "set_nr"), buf -> buf.writeInt(nrcheck.getNr()));
+        ScreenNetworking.of(zcommNRGUIDescription, NetworkSide.CLIENT).send(new Identifier(Main.ID, "set_nr"), buf -> buf.writeInt(nrcheck.getNr()));
     }
     
 }

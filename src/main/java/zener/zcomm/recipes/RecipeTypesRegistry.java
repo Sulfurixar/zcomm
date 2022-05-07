@@ -28,7 +28,7 @@ public enum RecipeTypesRegistry {
 
     public static void registerAll() {
         for (RecipeTypesRegistry value : values()) {
-            Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Main.identifier, value.pathName), value.serializer());
+            Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Main.ID, value.pathName), value.serializer());
             value.type = RecipeType.register(value.pathName);
         }
     }
@@ -49,7 +49,7 @@ public enum RecipeTypesRegistry {
     @SuppressWarnings({"unchecked"})
     private <T extends Recipe<? extends Inventory>> RecipeType<T> type(Class<T> clazz) {
         if (type == null) {
-            type = RecipeType.register(new Identifier(Main.identifier, pathName).toString());
+            type = RecipeType.register(new Identifier(Main.ID, pathName).toString());
         }
         return (RecipeType<T>) type;
     }

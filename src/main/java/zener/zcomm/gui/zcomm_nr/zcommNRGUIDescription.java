@@ -10,17 +10,19 @@ import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WTextField;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import zener.zcomm.Main;
-import zener.zcomm.data.dataHandler;
-import zener.zcomm.data.playerData;
+import zener.zcomm.components.ComponentHandler;
+import zener.zcomm.components.ICommRegistryComponent.Comm;
 import zener.zcomm.gui.zcomm_inventory.ZItem;
 import zener.zcomm.items.zcomm.comm;
 import zener.zcomm.util.nrCheck;
@@ -47,6 +49,7 @@ public class zcommNRGUIDescription extends SyncedGuiDescription {
 
     }
 
+    @SuppressWarnings("deprecation")
     private void setupDisplay(PlayerInventory playerInventory, ItemStack zcommItemStack, WGridPanel root) {
 
         ZItem commDisplay = new ZItem(zcommItemStack);
@@ -67,50 +70,44 @@ public class zcommNRGUIDescription extends SyncedGuiDescription {
 
         root.validate(this);
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.identifier, "set_nr"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.ID, "set_nr"), buf -> {
+            ServerPlayerEntity player = (ServerPlayerEntity)playerInventory.player;
             int nr = buf.readInt();
 
             nrCheck nrcheck = new nrCheck(nr);
 
-            if (nrcheck.nrTaken()) {
-                ScreenNetworking.of(this, NetworkSide.SERVER).send(new Identifier(Main.identifier, "nr_taken"), buf2 -> {});
+            if (nrcheck.nrTaken(player.getServer())) {
+                ScreenNetworking.of(this, NetworkSide.SERVER).send(new Identifier(Main.ID, "nr_taken"), buf2 -> {});
             } else {
                 NbtCompound tag = zcommItemStack.getOrCreateNbt();
                 tag.put("NR", NbtInt.of(nr));
-                tag.put("Owner", NbtString.of(playerInventory.player.getName().asString()));
+                tag.put("Owner", NbtString.of(player.getName().asString()));
                 // try to get playerData for this comm
-                String uuid;
                 if (!tag.contains("UUID")) {
-                    UUID _uuid = UUID.randomUUID();
-                    uuid = _uuid.toString();
-                    // check for database in case of UUID conflicts
-                    tag.put("UUID", NbtString.of(_uuid.toString()));
+                    UUID uuid = ComponentHandler.createUUID(player);
+                    tag.putUuid("UUID", uuid);
+                    ComponentHandler.COMM_REGISTRY.get(player.getServer().getOverworld()).addEntry(uuid, new Comm(player.getUuid(), nr, zcommItemStack));
                 } else {
-                    uuid = zcommItemStack.getNbt().getString("UUID");
-                }
-                try {
-                    playerData playerData = dataHandler.data.commData.get(uuid);
-                    if (playerData == null) {
-                        dataHandler.addEntry(uuid, new playerData(playerInventory.player.getUuidAsString(), new nrCheck(nr).getNrStr(), "", "", new String[] { "", "", "", "", "", ""}));
+                    if (tag.get("UUID").getType() == NbtType.STRING) {
+                        String uuid = tag.getString("UUID");
+                        ComponentHandler.updateCommEntry(player, uuid, zcommItemStack);
                     } else {
-                        playerData newPlayerData = new playerData(playerInventory.player.getUuidAsString(), new nrCheck(nr).getNrStr(), playerData.CHARM, playerData.CASING, playerData.UPGRADES);
-                        dataHandler.updateEntry(uuid, newPlayerData);
+                        UUID uuid = tag.getUuid("UUID");
+                        ComponentHandler.updateCommEntry(player, uuid, zcommItemStack);   
                     }
-                } catch(NullPointerException e) {
-                    System.out.println(e);
                 }
                 
-                ScreenNetworking.of(this, NetworkSide.SERVER).send(new Identifier(Main.identifier, "available"), buf2 -> {});
+                ScreenNetworking.of(this, NetworkSide.SERVER).send(new Identifier(Main.ID, "available"), buf2 -> {});
             }
         });
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).receive(new Identifier(Main.identifier, "nr_taken"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.CLIENT).receive(new Identifier(Main.ID, "nr_taken"), buf -> {
             NR_Field.setText("");
             NR_Field.releaseFocus();
             NR_Field.setSuggestion("NR Taken");
         });
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).receive(new Identifier(Main.identifier, "available"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.CLIENT).receive(new Identifier(Main.ID, "available"), buf -> {
             NR_Field.setText("");
             NR_Field.releaseFocus();
             NR_Field.setSuggestion("NR Set");

@@ -7,7 +7,6 @@
     ],
     "client": [
       "zcommsMixin",
-      "charmMixin",
       "ZItemRendererMixin"
     ],
     "server": [

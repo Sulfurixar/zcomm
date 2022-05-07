@@ -14,6 +14,7 @@ import lombok.Getter;
 import net.minecraft.entity.player.PlayerEntity;
 import zener.zcomm.Main;
 
+@Deprecated
 public class tData {
 
     public final UUID UUID;

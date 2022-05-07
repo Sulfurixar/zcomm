@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import zener.zcomm.Main;
-import zener.zcomm.data.dataHandler;
+import zener.zcomm.components.ComponentHandler;
 
 public class craftingComponent extends Item {
     
@@ -28,7 +28,7 @@ public class craftingComponent extends Item {
 
         //check item verification
         if (!tag.contains("v") || tag.getBoolean("v") == false) {
-            user.sendMessage(new TranslatableText(Main.identifier+".item_not_verified"), true);
+            user.sendMessage(new TranslatableText(Main.ID+".item_not_verified"), true);
             return super.use(world, user, hand);
         }
 
@@ -45,7 +45,7 @@ public class craftingComponent extends Item {
         NbtCompound _tag = stack.getOrCreateNbt();
         if (_tag.contains("CustomModelData")) {
             if (!_tag.contains("v") || _tag.getBoolean("v") == false) {
-                if (!dataHandler.checkTEntry(((ServerPlayerEntity)entity).getUuidAsString())) {
+                if (ComponentHandler.TECHNICIAN_REGISTRY.get(world.getServer().getOverworld()).isTechnician((PlayerEntity)entity)) {
                     ((ServerPlayerEntity)entity).getInventory().removeStack(slot);
                     ((ServerPlayerEntity)entity).getInventory().markDirty();
                 }

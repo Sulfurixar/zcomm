@@ -21,6 +21,9 @@
       ],
       "client": [
         "zener.zcomm.MainClient"
+      ],
+      "cardinal-components": [
+        "zener.zcomm.components.ComponentHandler"
       ]
     },
     "mixins": [
@@ -28,12 +31,19 @@
     ],
   
     "depends": {
-      "fabricloader": ">=0.13.2",
+      "fabricloader": ">=0.12.12",
       "fabric": "*",
-      "fabric-permissions-api-v0": "*",
       "minecraft": "1.17.1",
       "java": ">=16"
     },
     "suggests": {
+    },
+    "custom": {
+      "cardinal-components": [
+        "zcomm:comms",
+        "zcomm:technicians",
+        "zcomm:charm",
+        "zcomm:player_charm"
+      ]
     }
   }

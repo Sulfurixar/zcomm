@@ -1,13 +1,15 @@
 package zener.zcomm.gui.zcomm_inventory;
 
+import java.util.UUID;
+
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import zener.zcomm.data.dataHandler;
-import zener.zcomm.data.playerData;
+import net.minecraft.server.network.ServerPlayerEntity;
+import zener.zcomm.components.ComponentHandler;
 import zener.zcomm.util.inventoryUtils;
-import zener.zcomm.util.nrCheck;
 
 public class Inv extends SimpleInventory {
 
@@ -26,11 +28,13 @@ public class Inv extends SimpleInventory {
         this(playerInventory, zcommItemStack, 8);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void markDirty() {
         if (playerInventory.player.world.isClient()) {
             return;
         }
+        ServerPlayerEntity player = (ServerPlayerEntity) playerInventory.player;
         tag.put("Inventory", inventoryUtils.toTag(this));
         NbtCompound coverTag = this.getStack(1).getOrCreateNbt();
         if (!coverTag.contains("v") || coverTag.getBoolean("v") == false) {
@@ -44,14 +48,13 @@ public class Inv extends SimpleInventory {
         }
 
         if (tag.contains("UUID")){
-            String uuid = tag.getString("UUID");
-            playerData playerData = dataHandler.data.commData.get(uuid);
-            if (playerData == null) {
-                int nr = zcommItemStack.getOrCreateNbt().getInt("NR");
-                dataHandler.addEntry(uuid, new playerData(playerInventory.player.getUuidAsString(), new nrCheck(nr).getNrStr(), "", "", new String[] { "", "", "", "", "", ""}));
-            } else {
-                playerData newPlayerData = new playerData(zcommItemStack, playerData.USER_ID);
-                dataHandler.updateEntry(uuid, newPlayerData);
+            if (tag.get("UUID").getType() == NbtType.STRING) {
+                String uuid = tag.getString("UUID");
+                ComponentHandler.updateCommEntry(player, uuid, zcommItemStack);
+            }
+            if (tag.get("UUID").getType() == NbtType.INT_ARRAY) {
+                UUID uuid = tag.getUuid("UUID");
+                ComponentHandler.updateCommEntry(player, uuid, zcommItemStack);
             }
         }
         

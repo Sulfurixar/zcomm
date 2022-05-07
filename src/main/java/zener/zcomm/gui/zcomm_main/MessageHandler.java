@@ -25,7 +25,7 @@ public class MessageHandler implements Runnable {
 
     public void run() {
 
-        ScreenNetworking.of(zcommMainGUIDescription, NetworkSide.CLIENT).send(new Identifier(Main.identifier, Main.identifier+"_message"), buf -> {
+        ScreenNetworking.of(zcommMainGUIDescription, NetworkSide.CLIENT).send(new Identifier(Main.ID, Main.ID+"_message"), buf -> {
             String message = "";
             nrCheck nrCheck = new nrCheck(((String) nrField.getSuggestion().asString()).trim());
             if (nrField.getSuggestion() == null || !nrCheck.isValid()) {

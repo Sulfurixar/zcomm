@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import zener.zcomm.util.nrCheck;
 
+@Deprecated
 public class playerData {
     
     public final String USER_ID;

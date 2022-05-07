@@ -11,6 +11,7 @@ import io.github.cottonmc.cotton.gui.widget.WText;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -18,11 +19,12 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import zener.zcomm.Main;
 import zener.zcomm.chat.ChatHistory;
-import zener.zcomm.data.dataHandler;
+import zener.zcomm.components.ComponentHandler;
 import zener.zcomm.items.zcomm.comm;
 import zener.zcomm.util.nrCheck;
 
@@ -56,6 +58,7 @@ public class MainGUIDescription extends SyncedGuiDescription {
 
     }
 
+    @SuppressWarnings("deprecation")
     private void setupDisplay(PlayerInventory playerInventory, ItemStack zcommItemStack, WGridPanel root) {
 
 
@@ -64,16 +67,27 @@ public class MainGUIDescription extends SyncedGuiDescription {
         String name = player.getName().asString();
         int nr = zcommItemStack.getOrCreateNbt().getInt("NR");
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).send(new Identifier(Main.identifier, Main.identifier+"_check_owner"), buf -> {
-            buf.writeString(tag.getString("UUID"));
-            buf.writeString(player.getUuidAsString());
-            buf.writeString(name);
-        });
+        if (tag.get("UUID").getType() == NbtType.STRING) {
+            ScreenNetworking.of(this, NetworkSide.CLIENT).send(new Identifier(Main.ID, Main.ID+"_check_owner_deprecated"), buf -> {
+                buf.writeString(tag.getString("UUID"));
+                buf.writeString(player.getUuidAsString());
+                buf.writeString(name);
+            });
+        } else {
+            ScreenNetworking.of(this, NetworkSide.CLIENT).send(new Identifier(Main.ID, Main.ID+"_check_owner"), buf -> {
+                buf.writeUuid(tag.getUuid("UUID"));
+                buf.writeUuid(player.getUuid());
+                buf.writeString(name);
+            });
+        }
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.identifier, Main.identifier+"_check_owner"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.ID, Main.ID+"_check_owner_deprecated"), buf -> {
             String uuid = buf.readString();
             String owner_id = buf.readString();
-            if (dataHandler.checkOwner(uuid, owner_id)) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+            boolean isOwner = ComponentHandler.COMM_REGISTRY.get(serverPlayer.getServer().getOverworld()).isOwner(uuid, owner_id);
+            
+            if (isOwner) {
                 String _name = buf.readString();
                 if (tag.getString("Owner").compareTo(_name) != 0) {
                     tag.put("Owner", NbtString.of(_name));
@@ -82,7 +96,22 @@ public class MainGUIDescription extends SyncedGuiDescription {
             }
         });
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.identifier, Main.identifier+"_message"), buf -> {
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.ID, Main.ID+"_check_owner"), buf -> {
+            UUID uuid = buf.readUuid();
+            UUID owner_id = buf.readUuid();
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+            boolean isOwner = ComponentHandler.COMM_REGISTRY.get(serverPlayer.getServer().getOverworld()).isOwner(uuid, owner_id);
+            
+            if (isOwner) {
+                String _name = buf.readString();
+                if (tag.getString("Owner").compareTo(_name) != 0) {
+                    tag.put("Owner", NbtString.of(_name));
+                    playerInventory.markDirty();
+                }
+            }
+        });
+
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(new Identifier(Main.ID, Main.ID+"_message"), buf -> {
             playerInventory.player.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(buf.readString()), MessageType.CHAT, buf.readUuid());
         });
 

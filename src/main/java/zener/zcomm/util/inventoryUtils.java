@@ -71,6 +71,7 @@ public class inventoryUtils {
         return !(obj.get("Stack") == null || obj.get("Stack").getAsJsonObject().get("id") == null || obj.get("Stack").getAsJsonObject().get("id").getAsString().compareTo("minecraft:air") == 0);
     }
 
+    @Deprecated
     public static NbtList fromPlayerData(playerData pdata) {
         NbtList inventory = new NbtList();
         

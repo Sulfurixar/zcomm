@@ -11,11 +11,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import zener.zcomm.util.nrCheck;
 
+@Deprecated
 public class dataHandler {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     public static data data;
+
+    private final MinecraftServer server;
 
     public static void serverLoad(MinecraftServer server) {
         data = new data(server);
@@ -96,6 +99,7 @@ public class dataHandler {
 
     public dataHandler(ServerLoginNetworkHandler networkHandler, MinecraftServer server) {
         data = new data(server);
+        this.server = server;
     }
 
     public static PacketByteBuf writeNrTransmitter(PacketByteBuf buf) {
@@ -112,10 +116,10 @@ public class dataHandler {
         return buf;
     }
 
-    public static data readNrTransmitter(PacketByteBuf buf) {
+    public data readNrTransmitter(PacketByteBuf buf) {
         data _data = data;
         if (_data == null) {
-            _data = new data();
+            _data = new data(server);
         
             int buf_size = buf.readInt();
             for (int i = 0; i < buf_size; i++) {

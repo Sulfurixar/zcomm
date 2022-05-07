@@ -2,7 +2,6 @@ package zener.zcomm.data;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -20,11 +18,16 @@ import org.apache.commons.lang3.ArrayUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.WorldSavePath;
 import zener.zcomm.Main;
+import zener.zcomm.components.CommRegistryComponent;
+import zener.zcomm.components.ComponentHandler;
+import zener.zcomm.components.TechnicianRegistryComponent;
 
+@Deprecated
 public class data {
     
     public File Data;
     public File TData;
+    private final MinecraftServer server;
 
 
     /*  Structure of commData
@@ -54,18 +57,15 @@ public class data {
     */
     public Map<String, tData> techData = new HashMap<>();
 
-    public data() {
-        //temporary data that doesn't do any saving
-    }
-
     public data(MinecraftServer server) {
         Path dataPath = server.getSavePath(WorldSavePath.ROOT);
+        this.server = server;
         
-        File dataDir = dataPath.resolve(Main.identifier).toFile();
+        File dataDir = dataPath.resolve(Main.ID).toFile();
         try {
             if (!dataDir.exists())
                 dataDir.mkdirs();
-            this.Data = new File(dataDir, Main.identifier+"_data.json");
+            this.Data = new File(dataDir, Main.ID+"_data.json");
             this.TData = new File(dataDir, "tdata.dat");
             if (!this.Data.exists()) {
                 this.Data.createNewFile();
@@ -106,6 +106,11 @@ public class data {
                         upgrade.toArray(new String[6])
                     );
                     commData.put(entry.getKey(), playerData);
+
+                    CommRegistryComponent comms = ComponentHandler.COMM_REGISTRY.get(server.getOverworld());
+                    if (comms.getComm(entry.getKey()) == null) {
+                        comms.addEntry(entry.getKey(), playerData);
+                    }
                 });
             }
             
@@ -124,6 +129,11 @@ public class data {
                     });
                     tData newTData = new tData(ArrayUtils.toPrimitive(a.toArray(new Byte[a.size()])), ArrayUtils.toPrimitive(b.toArray(new Byte[b.size()])));
                     techData.put(entry.getKey(), newTData);
+
+                    TechnicianRegistryComponent technicians = ComponentHandler.TECHNICIAN_REGISTRY.get(server.getOverworld());
+                    if (technicians.getTechnician(newTData.UUID) == null) {
+                        technicians.addEntry(newTData.UUID, newTData.isTechnician, newTData.isHeadTechnician);
+                    }
                 });
             }
             
@@ -133,9 +143,9 @@ public class data {
         }
     }
 
-    //set to private
+    // set to do nothing, to avoid new file creation.
     public void save() {
-        JsonObject obj = new JsonObject();
+        /*JsonObject obj = new JsonObject();
         obj.addProperty("__comment", "TODO");
         JsonObject obj2 = new JsonObject();
         obj2.addProperty("__comment", "TODO");
@@ -187,6 +197,7 @@ public class data {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
     }
 
     public static <V, K> Map<V, K> createHashMap(Consumer<Map<V, K>> cons) {

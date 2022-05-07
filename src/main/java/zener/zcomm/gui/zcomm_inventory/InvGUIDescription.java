@@ -31,7 +31,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
     *   Charm
     *   Upgrades: 6
     */
-    private static final int INVENTORY_SIZE = 8;
+    public static final int INVENTORY_SIZE = 8;
 
 
     public InvGUIDescription(int synchronizationID, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
@@ -62,7 +62,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
 
         inventoryUtils.fromTag(inventoryTag, inventory);
 
-        WText charmText = new WText(new TranslatableText("gui."+Main.identifier+".charmslot"));
+        WText charmText = new WText(new TranslatableText("gui."+Main.ID+".charmslot"));
         charmText.setVerticalAlignment(VerticalAlignment.BOTTOM);
         charmText.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(charmText, 0, 1, 3, 1);
@@ -73,7 +73,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
         
         root.add(charmSlot, 1, 2);
 
-        WText casingText = new WText(new TranslatableText("gui."+Main.identifier+".casingslot"));
+        WText casingText = new WText(new TranslatableText("gui."+Main.ID+".casingslot"));
         casingText.setVerticalAlignment(VerticalAlignment.BOTTOM);
         casingText.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(casingText, 0, 3, 3, 1);
@@ -84,7 +84,7 @@ public class InvGUIDescription extends SyncedGuiDescription {
 
         root.add(casingSlot, 1, 4);
 
-        WText upgradeText = new WText(new TranslatableText("gui."+Main.identifier+".upgradeslot"));
+        WText upgradeText = new WText(new TranslatableText("gui."+Main.ID+".upgradeslot"));
         upgradeText.setVerticalAlignment(VerticalAlignment.BOTTOM);
         upgradeText.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(upgradeText, 5, 1, 4, 1);

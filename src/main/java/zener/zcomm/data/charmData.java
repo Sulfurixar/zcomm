@@ -8,8 +8,9 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import zener.zcomm.entities.charmProjectile;
+import zener.zcomm.entities.CharmProjectile;
 
+@Deprecated
 public class charmData {
     
     private static final charmData INSTANCE = new charmData();
@@ -42,13 +43,13 @@ public class charmData {
 
     public playerInfo pInfo = new playerInfo();
 
-    private HashMap<String, charmProjectile> activeCharms = new HashMap<>();
+    private HashMap<String, CharmProjectile> activeCharms = new HashMap<>();
 
-    public HashMap<String, charmProjectile> getActiveCharms() {
+    public HashMap<String, CharmProjectile> getActiveCharms() {
         return activeCharms;
     }
 
-    public void setCharm(String uuid, charmProjectile charm) {
+    public void setCharm(String uuid, CharmProjectile charm) {
         activeCharms.put(uuid, charm);
     }
 

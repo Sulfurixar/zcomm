@@ -1,118 +1,92 @@
 package zener.zcomm.commands;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import java.util.function.Predicate;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+
+import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.command.argument.NbtCompoundArgumentType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import zener.zcomm.Main;
-import zener.zcomm.data.dataHandler;
 
 public class Verify {
 
-    public static int verify(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        ServerPlayerEntity technician = source.getPlayer();
-        String technician_uuid = technician.getUuidAsString();
+    private static Predicate<ServerCommandSource> require(String permission) {
+        return CommandWrapper.require("verify"+(permission.equals("") ? "" : "."+permission), 2);
+    }
 
-        if (!dataHandler.checkTEntry(technician_uuid)) {
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
+    public static LiteralCommandNode<ServerCommandSource> verify() {
+        return ((LiteralArgumentBuilder<ServerCommandSource>)CommandManager
+        .literal("verify")
+        .requires(require("verify"))
+        .executes(context -> runVerify(
+            context.getSource(),
+            context.getSource().getPlayer(),
+            false,
+            null
+        )).then(CommandManager
+            .literal("verify.reset")
+            .requires(require("reset"))
+            .executes(context -> runVerify(
+                context.getSource(),
+                context.getSource().getPlayer(),
+                true,
+                null
+            ))
+        )
+        .then(CommandManager
+            .literal("help")
+            .requires(require("verify.help"))
+            .executes(context -> runVerify(
+                context.getSource(),
+                context.getSource().getPlayer(),
+                false,
+                null
+            ))
+        )
+        .then(CommandManager.argument("nbt", NbtCompoundArgumentType.nbtCompound())
+            .requires(require("verify.nbt"))
+            .executes(context -> runVerify(
+                context.getSource(),
+                context.getSource().getPlayer(),
+                false,
+                NbtCompoundArgumentType.getNbtCompound(context, "nbt")
+            ))
+        )
+        ).build();
+    }
+
+    private static int runVerify(ServerCommandSource source, @Nullable ServerPlayerEntity player, @Nullable Boolean reset, @Nullable NbtCompound nbt) {
+        if (player == null) { source.sendFeedback(TranslateLib.MUST_BE_PLAYER, false); return 0; }
+        if (CommandWrapper.isValidTechnician(source, player)) { source.sendFeedback(TranslateLib.PERMISSIONS_LOW, false); return 0; }
+
+        if (reset) {
+            player.getItemsHand().iterator().forEachRemaining(stack -> {
+                stack.setNbt(new NbtCompound());
+                source.sendFeedback(TranslateLib.VERIFY_SUCCESS.append(stack.getName()), false);
+            });
             return Command.SINGLE_SUCCESS;
         }
 
-        Iterable<ItemStack> stacks = technician.getItemsHand();
-        stacks.iterator().forEachRemaining(stack -> {
-            for (Item item : Main.ITEMS) {
-                if (stack.getItem() == item) {
-                    NbtCompound tag = stack.getOrCreateNbt();
-                    if (!tag.contains("v")) {
-                        tag.putBoolean("v", true);
-                        stack.setNbt(tag);
-                        technician.getInventory().markDirty();
-                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.success").append(stack.getName()), false);
-                    } else {
-                        tag.putBoolean("v", true);
-                        stack.setNbt(tag);
-                        technician.getInventory().markDirty();
-                        source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.success").append(stack.getName()), false);
-                    }
-                }
-            }
-        });
-
-        source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify"), false);
-
-        return Command.SINGLE_SUCCESS;
-
-    }
-
-    public static int verifyNbt(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        ServerPlayerEntity technician = source.getPlayer();
-        String technician_uuid = technician.getUuidAsString();
-
-        if (!dataHandler.checkTEntry(technician_uuid)) {
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
+        if (nbt != null) {
+            player.getItemsHand().iterator().forEachRemaining(stack -> {
+                NbtCompound tag = stack.getOrCreateNbt();
+                nbt.getKeys().forEach(key -> {
+                    tag.put(key, nbt.get(key));
+                });
+                tag.putBoolean("v", true);
+                source.sendFeedback(TranslateLib.VERIFY_SUCCESS.append(stack.getName()), false);
+            });
             return Command.SINGLE_SUCCESS;
         }
 
-        NbtCompound nbt = NbtCompoundArgumentType.getNbtCompound(context, "nbt");
-        Iterable<ItemStack> stacks = technician.getItemsHand();
-        stacks.iterator().forEachRemaining(stack -> {
-            NbtCompound tag = stack.getOrCreateNbt();
-            for (String key : nbt.getKeys()) {
-                tag.put(key, nbt.get(key));
-            }
-            stack.setNbt(tag);
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.success").append(stack.getName()), false);
-        });
-
-
+        source.sendFeedback(new TranslatableText("command."+Main.ID+".verify"), false);
         return Command.SINGLE_SUCCESS;
     }
-
-    public static int verifyHelp(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        ServerPlayerEntity technician = source.getPlayer();
-        String technician_uuid = technician.getUuidAsString();
-
-        if (!dataHandler.checkTEntry(technician_uuid)) {
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
-            return Command.SINGLE_SUCCESS;
-        }
-
-        source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify"), false);
-
-        return Command.SINGLE_SUCCESS;
-
-    }
-
-    public static int verifyReset(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        ServerPlayerEntity technician = source.getPlayer();
-        String technician_uuid = technician.getUuidAsString();
-
-        if (!dataHandler.checkTEntry(technician_uuid)) {
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.permissions_too_low"), false);
-            return Command.SINGLE_SUCCESS;
-        }
-
-        Iterable<ItemStack> stacks = technician.getItemsHand();
-        stacks.iterator().forEachRemaining(stack -> {
-            stack.setNbt(new NbtCompound());
-            source.sendFeedback(new TranslatableText("command."+Main.identifier+".verify.success").append(stack.getName()), false);
-        });
-
-
-        return Command.SINGLE_SUCCESS;
-
-
-    }
-    
 }

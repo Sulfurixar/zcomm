@@ -39,22 +39,22 @@ public class handCraft {
                     .getAllMatches(RecipeTypesRegistry.HAND_RECIPE_SERIALIZER.type(), user.getInventory(), world);
 
         if (recipeList == null) {
-            user.sendMessage(new TranslatableText("crafting."+Main.identifier+".no_recipe"), false);
+            user.sendMessage(new TranslatableText("crafting."+Main.ID+".no_recipe"), false);
             return false;
         }
 
         if (recipeList.isEmpty()) {
-            user.sendMessage(new TranslatableText("crafting."+Main.identifier+".no_recipe"), false);
+            user.sendMessage(new TranslatableText("crafting."+Main.ID+".no_recipe"), false);
             return false;
         }
 
         if (recipeList.size() > 1) {
-            user.sendMessage(new TranslatableText("crafting."+Main.identifier+".multiple_recipe_conflict"), false);
+            user.sendMessage(new TranslatableText("crafting."+Main.ID+".multiple_recipe_conflict"), false);
             return false;
         }
 
         if (!recipeList.get(0).matchCatalyst(user.getInventory(), world)) {
-            user.sendMessage(new TranslatableText("crafting."+Main.identifier+".no_catalyst"), false);
+            user.sendMessage(new TranslatableText("crafting."+Main.ID+".no_catalyst"), false);
             return false;
         }
 
@@ -87,7 +87,7 @@ public class handCraft {
                 }
             }
             if (!found) {
-                user.sendMessage(new TranslatableText("crafting."+Main.identifier+".recipe_item_not_found"), false);
+                user.sendMessage(new TranslatableText("crafting."+Main.ID+".recipe_item_not_found"), false);
                 success = false;
             }
         }

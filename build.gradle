@@ -23,6 +23,11 @@ repositories {
     }
 
 	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+	maven {
+        name = "Ladysnake Mods"
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
 }
 
 dependencies {
@@ -39,10 +44,6 @@ dependencies {
 
 	// OWN dependencies
 
-	// Eclipse Collections
-	modApi 'org.eclipse.collections:eclipse-collections-api:11.0.0'
-	modImplementation include('org.eclipse.collections:eclipse-collections:11.0.0')
-
 	// LibGui
 	modImplementation include("io.github.cottonmc:LibGui:${project.libgui_version}")
 
@@ -50,6 +51,16 @@ dependencies {
 	modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
 	modApi 	"me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
 	include	"me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+
+	// Cardinal Components
+	compileOnly "com.demonwav.mcdev:annotations:1.0"
+	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components}"
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components}"
+	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cardinal_components}"
+
+	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components}"
+    include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components}"
+	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cardinal_components}"
 
 }
 
