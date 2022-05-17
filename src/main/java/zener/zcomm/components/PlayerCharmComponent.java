@@ -101,7 +101,6 @@ public class PlayerCharmComponent implements IPlayerCharmComponent, AutoSyncedCo
                         newCharms.add(charm);
                         found.toggle();
                     }
-                    player.getEntityWorld().spawnEntity(new SnowballEntity(player.getEntityWorld(), (LivingEntity) player));
                 }
             }
         });

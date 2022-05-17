@@ -105,7 +105,7 @@ public class Main implements ModInitializer {
 
 	public static final ItemGroup ZCOMM_GROUP = FabricItemGroupBuilder.create(
 		new Identifier(ID, "general"))
-	.icon(() -> new ItemStack(new comm(new Item.Settings())))
+	.icon(() -> new ItemStack(ZCOMM))
 	.appendItems(stacks -> stacks.addAll(Arrays.asList(ITEMS).stream().map(ItemStack::new).collect(Collectors.toList())))
 	.build();
 
